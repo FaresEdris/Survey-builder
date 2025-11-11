@@ -91,29 +91,40 @@ async function showSurveyDetail(id) {
   
   // Draft button
   const draftBtn = document.getElementById("draftBtn");
-  draftBtn.style.display = "inline-block";
-  draftBtn.onclick = () => {
-    //draft saves current responses to localStorage
-    const draftDict = localStorage.getItem(`draftDict`);
-    const drafts = draftDict ? JSON.parse(draftDict) : {};
-    const responses = survey.questions.map(q => {
-      if (q.type === "multiple") {
-        const checked = form.querySelector(`input[name="q_${q.id}"]:checked`);
-        return { question_id: q.id, answer: checked ? checked.value : "" };
-      } else if (q.type === "checkbox") {
-        const checkedBoxes = form.querySelectorAll(`input[name="q_${q.id}"]:checked`);
-        const values = Array.from(checkedBoxes).map(cb => cb.value);
-        return { question_id: q.id, answer: values };
-      } else {
-        const field = form.querySelector(`[name="q_${q.id}"]`);
-        return { question_id: q.id, answer: field ? field.value : "" };
-      }
-    });
-    
-    drafts[survey.id] = responses;
-    localStorage.setItem(`draftArray`, JSON.stringify(drafts));
-    alert("Draft saved!");
+draftBtn.style.display = "inline-block";
+
+draftBtn.onclick = () => {
+  // Load the saved drafts object from localStorage
+  const saved = localStorage.getItem("drafts");
+  const drafts = saved ? JSON.parse(saved) : {};
+
+  // Collect current answers from the form
+  const responses = survey.questions.map(q => {
+    if (q.type === "multiple") {
+      const checked = form.querySelector(`input[name="q_${q.id}"]:checked`);
+      return { question_id: q.id, answer: checked ? checked.value : "" };
+    } else if (q.type === "checkbox") {
+      const checkedBoxes = form.querySelectorAll(`input[name="q_${q.id}"]:checked`);
+      const values = Array.from(checkedBoxes).map(cb => cb.value);
+      return { question_id: q.id, answer: values };
+    } else {
+      const field = form.querySelector(`[name="q_${q.id}"]`);
+      return { question_id: q.id, answer: field ? field.value : "" };
+    }
+  });
+
+  // Save this survey’s draft under its ID
+  drafts[survey.id] = {
+    surveyTitle: survey.title,
+    responses: responses,
+    savedAt: new Date().toISOString()
   };
+
+  // Persist updated object
+  localStorage.setItem("drafts", JSON.stringify(drafts));
+  alert(`Draft for "${survey.title}" saved!`);
+};
+
   // submit behaviour
   document.getElementById("submitBtn").onclick = async () => {
     const responses = survey.questions.map(q => {
