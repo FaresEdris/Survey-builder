@@ -11,9 +11,13 @@ async function apiPost(path, body) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body)
     });
-    return await res.json();
+    const data = await res.json();
+    // Handle errors from backend
+    if (!res.ok) {
+        throw new Error(data.error || "request failed");
+    }
+    return data;
 }
-
 async function apiDelete(path) {
     const res = await fetch(`${BASE_URL}${path}`, { method: "DELETE" });
     return await res.json();

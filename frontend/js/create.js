@@ -39,7 +39,19 @@ addQuestionBtn.onclick = () => {
 submitSurveyBtn.onclick = async () => {
   const title = document.getElementById("title").value;
   const description = document.getElementById("description").value;
-
+  // Validation currently handled in backend
+  /* if(!title && !description) {
+    alert("Title and Description are required.");
+    return;
+  }
+  if (!title) {
+    alert("Title is required.");
+    return;
+  }
+  if(!description) {
+    alert("Description is required.");
+    return;
+  } */
   const questionElements = document.querySelectorAll(".question");
   const questionData = Array.from(questionElements).map(q => {
     const text = q.querySelector(".q-text").value;
@@ -48,7 +60,19 @@ submitSurveyBtn.onclick = async () => {
     const options = optionsField && type === "multiple"
       ? optionsField.value.split(",").map(o => o.trim()).filter(o => o)
       : [];
-
+    if (!text) {
+      alert("Question name cannot be empty.");
+      error("Question name is required");
+      return;
+    }
+    if(type === "multiple" && options.length === 0) {
+      alert("Multiple choice questions must have at least one option.");
+      error("Invalid question options");
+    }
+    if(type === "multiple" && options.length < 2) {
+      alert("Multiple choice questions must have at least two options.");
+      error("At least two options required");
+    }
     return { text, type, options };
   });
 
@@ -58,7 +82,12 @@ submitSurveyBtn.onclick = async () => {
     questions: questionData
   };
 
-  await apiPost("/surveys", newSurvey);
-  alert("Survey created successfully!");
+  try {
+    await apiPost("/surveys", newSurvey);
+    alert("Survey created successfully!");}
+  catch(err){
+    alert(`Error creating survey: ${err.message}`);
+    return;
+  }
   window.location.href = "surveys.html";
 };

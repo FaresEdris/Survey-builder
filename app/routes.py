@@ -27,8 +27,17 @@ def get_survey(survey_id):
 @app.route("/surveys", methods=["POST"])
 def add_survey():
     data = request.json
+    if not data.get("title") and not data.get("description"):
+        return jsonify({"error": "Title and Description are required"}), 400
+    if not data.get("title"):
+        return jsonify({"error": "Title is required"}), 400
+    if not data.get("questions") or not isinstance(data["questions"], list):
+        return jsonify({"error": "at least one question is required"}), 400
     survey = survey_service.add_survey(data)
-    for question in data.get("questions", []):
+    # the logic above does the same validation for questions, so this is redundant could be removed
+    #if data.get("questions")==[]:
+    #    return jsonify({"error": "At least one question is required"}), 400
+    for question in data.get("questions"):
         survey_service.add_question(survey["id"], question)
     return jsonify(survey), 201
 
