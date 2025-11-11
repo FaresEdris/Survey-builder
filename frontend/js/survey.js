@@ -1,4 +1,3 @@
-// survey.js
 async function loadSurveys() {
   const surveys = await apiGet("/surveys");
   const list = document.getElementById("surveyList");
@@ -11,8 +10,6 @@ async function loadSurveys() {
 
   surveys.forEach(s => {
     const li = document.createElement("li");
-
-    // Use a button so we don't navigate away; prevents default anchor behavior
     const btn = document.createElement("button");
     btn.textContent = s.title;
     btn.className = "link-like";
@@ -24,7 +21,6 @@ async function loadSurveys() {
 }
 
 async function showSurveyDetail(id) {
-  // fetch selected survey
   let survey;
   try {
     survey = await apiGet(`/surveys/${id}`);
@@ -38,23 +34,17 @@ async function showSurveyDetail(id) {
   const details = document.getElementById("surveyDetails");
   details.style.display = "block";
 
-  // fill title
-  document.getElementById("title").textContent = survey.title || "Untitled survey";
-
-  // render questions
+  document.getElementById("title").textContent = survey.title;
   const form = document.getElementById("responseForm");
   form.innerHTML = "";
 
   survey.questions.forEach(q => {
     const qDiv = document.createElement("div");
     qDiv.className = "question";
-
     const label = document.createElement("p");
     label.textContent = q.text;
     qDiv.appendChild(label);
-
     if (q.type === "multiple" && q.options?.length) {
-      // radio buttons (single choice)
       q.options.forEach(opt => {
         const optDiv = document.createElement("div");
         optDiv.className = "option";
@@ -67,11 +57,10 @@ async function showSurveyDetail(id) {
         qDiv.appendChild(optDiv);
       });
     } else if (q.type === "checkbox" && q.options?.length) {
-      // checkboxes (multi-select)
+      // checkboxes right now not supported, adding checkboxes future task
       q.options.forEach((opt, idx) => {
         const optDiv = document.createElement("div");
         optDiv.className = "option";
-        // include index to allow multiple checkboxes with same name
         optDiv.innerHTML = `
           <label>
             <input type="checkbox" name="q_${q.id}" value="${escapeHtml(opt)}">
@@ -81,7 +70,6 @@ async function showSurveyDetail(id) {
         qDiv.appendChild(optDiv);
       });
     } else {
-      // default text input
       const input = document.createElement("input");
       input.type = "text";
       input.name = `q_${q.id}`;
@@ -91,7 +79,7 @@ async function showSurveyDetail(id) {
     form.appendChild(qDiv);
   });
 
-  // show back button and submit behaviour
+  // show back button 
   const backBtn = document.getElementById("backBtn");
   backBtn.style.display = "inline-block";
   backBtn.onclick = () => {
@@ -100,7 +88,33 @@ async function showSurveyDetail(id) {
     document.getElementById("title").textContent = "";
     form.innerHTML = "";
   };
-
+  
+  // Draft button
+  const draftBtn = document.getElementById("draftBtn");
+  draftBtn.style.display = "inline-block";
+  draftBtn.onclick = () => {
+    //draft saves current responses to localStorage
+    const draftDict = localStorage.getItem(`draftDict`);
+    const drafts = draftDict ? JSON.parse(draftDict) : {};
+    const responses = survey.questions.map(q => {
+      if (q.type === "multiple") {
+        const checked = form.querySelector(`input[name="q_${q.id}"]:checked`);
+        return { question_id: q.id, answer: checked ? checked.value : "" };
+      } else if (q.type === "checkbox") {
+        const checkedBoxes = form.querySelectorAll(`input[name="q_${q.id}"]:checked`);
+        const values = Array.from(checkedBoxes).map(cb => cb.value);
+        return { question_id: q.id, answer: values };
+      } else {
+        const field = form.querySelector(`[name="q_${q.id}"]`);
+        return { question_id: q.id, answer: field ? field.value : "" };
+      }
+    });
+    
+    drafts[survey.id] = responses;
+    localStorage.setItem(`draftArray`, JSON.stringify(drafts));
+    alert("Draft saved!");
+  };
+  // submit behaviour
   document.getElementById("submitBtn").onclick = async () => {
     const responses = survey.questions.map(q => {
       if (q.type === "multiple") {
