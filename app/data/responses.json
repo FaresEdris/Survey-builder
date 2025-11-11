@@ -1,0 +1,109 @@
+[
+    {
+        "id": 1,
+        "survey_id": 1,
+        "respondent": "user_1",
+        "answers": [
+            {
+                "question_id": 1,
+                "answer": "Satisfied"
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "survey_id": 3,
+        "respondent": "user_1",
+        "answers": [
+            {
+                "question_id": 1,
+                "answer": "Good"
+            },
+            {
+                "question_id": 2,
+                "answer": "Faster delivery"
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "survey_id": 4,
+        "respondent": "user_1",
+        "answers": [
+            {
+                "question_id": 1,
+                "answer": "Good"
+            }
+        ]
+    },
+    {
+        "id": 4,
+        "survey_id": 4,
+        "respondent": "user_2",
+        "answers": [
+            {
+                "question_id": 1,
+                "answer": "Bad"
+            }
+        ]
+    },
+    {
+        "id": 5,
+        "survey_id": 5,
+        "respondent": "user_1",
+        "answers": [
+            {
+                "question_id": 1,
+                "answer": "Good"
+            }
+        ]
+    },
+    {
+        "id": 6,
+        "survey_id": 6,
+        "respondent": "user_1",
+        "answers": [
+            {
+                "question_id": 1,
+                "answer": "Good"
+            }
+        ]
+    },
+    {
+        "id": 7,
+        "survey_id": 8,
+        "respondent": "anonymous",
+        "answers": [
+            {
+                "question_id": 1,
+                "answer": "Good"
+            }
+        ]
+    },
+    {
+        "id": 8,
+        "survey_id": 8,
+        "respondent": "anonymous",
+        "answers": [
+            {
+                "question_id": 1,
+                "answer": "Bad"
+            }
+        ]
+    },
+    {
+        "id": 9,
+        "survey_id": 2,
+        "respondent": "anonymous",
+        "answers": [
+            {
+                "question_id": 1,
+                "answer": "Neutral"
+            },
+            {
+                "question_id": 2,
+                "answer": "no "
+            }
+        ]
+    }
+]

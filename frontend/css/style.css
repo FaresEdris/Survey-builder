@@ -1,0 +1,202 @@
+/* Reset and base styles */
+body {
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  background: #f8f9fb;
+  color: #333;
+  margin: 0;
+  padding-top: 80px; /* space for fixed navbar */
+}
+
+/* Navbar */
+nav {
+  width: 100%;
+  background-color: #2c3e50;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+nav h1 {
+  margin: 0;
+  font-size: 1.2em;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 15px;
+  margin: 0;
+  padding: 0;
+}
+
+nav ul li a {
+  color: #fff;
+  text-decoration: none;
+  padding: 5px 10px;
+  transition: background 0.2s;
+  margin-left: 10px; /* was 15px */
+
+}
+
+nav ul li a:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+/* Container for main content */
+.container {
+  max-width: 700px;
+  width: 90%;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  padding: 30px 40px;
+  margin: 0 auto 40px auto;
+}
+
+/* Survey list */
+.container ul#surveyList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.container ul#surveyList li {
+  background: #f0f3f6;
+  margin: 10px 0;
+  padding: 15px;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.container ul#surveyList li:hover {
+  background: #e4e9f0;
+}
+
+.container ul#surveyList button.link-like {
+  background: none;
+  border: none;
+  color: #2a75ff;
+  font-size: 18px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Titles */
+h1, h2 {
+  text-align: center;
+  color: #2d3e50;
+  margin-bottom: 20px;
+}
+
+/* Buttons */
+button, .btn {
+  display: inline-block;
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background 0.3s ease;
+}
+
+button:hover, .btn:hover {
+  opacity: 0.9;
+}
+
+.btn.primary {
+  background: #2ecc71;
+  color: #fff;
+}
+
+.btn.primary:hover {
+  background: #27ae60;
+}
+
+.removeBtn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 5px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.question {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f8f9fb;
+  border-left: 4px solid #3498db;
+}
+
+.question h4 {
+  margin-bottom: 10px;
+  color: #2c3e50;
+}
+
+.question p {
+  margin: 6px 0;
+  padding-left: 10px;
+}
+
+
+.question-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.question-input {
+  flex: 1;
+  padding: 8px;
+  margin-right: 5px;
+}
+
+/* Inputs, selects, textareas */
+input, textarea, select {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+input[type="text"] {
+  width: 95%;
+}
+
+/* Options (checkbox/radio) */
+.option {
+  margin-left: 15px;
+  margin-bottom: 5px;
+}
+
+/* Hidden section toggle (survey details) */
+#surveyDetails {
+  animation: fadeIn 0.3s ease;
+}
+
+/* Back button */
+#backBtn {
+  background: #aaa;
+  color: white;
+}
+
+#backBtn:hover {
+  background: #888;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

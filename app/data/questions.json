@@ -1,0 +1,25 @@
+[
+    {
+        "id": 1,
+        "survey_id": 1,
+        "text": "How satisfied are you?",
+        "type": "multiple_choice",
+        "options": [
+            "Very satisfied",
+            "Satisfied",
+            "Neutral",
+            "Dissatisfied"
+        ]
+    },
+    {
+        "id": 2,
+        "survey_id": 2,
+        "text": "How easy was it to use our site?",
+        "type": "multiple_choice",
+        "options": [
+            "Very easy",
+            "Somewhat easy",
+            "Hard"
+        ]
+    }
+]
