@@ -3,12 +3,13 @@ const addQuestionBtn = document.getElementById("addQuestionBtn");
 const submitSurveyBtn = document.getElementById("submitSurveyBtn");
 
 let questions = [];
+let questionCount = 0;
 
 addQuestionBtn.onclick = () => {
   const qDiv = document.createElement("div");
   qDiv.className = "question";
 
-  const qIndex = questions.length;
+  const qIndex = questionCount++;
 
   qDiv.innerHTML = `
     <h4>Question ${qIndex + 1}</h4>
@@ -24,6 +25,7 @@ addQuestionBtn.onclick = () => {
       <p>Options (comma-separated):</p>
       <input type="text" class="q-options" placeholder="Option1, Option2, Option3">
     </div>
+    <button class="remove-question-btn">Remove Question</button>
   `;
 
   // Toggle options field based on type
@@ -31,6 +33,11 @@ addQuestionBtn.onclick = () => {
   const optionsDiv = qDiv.querySelector(".options");
   typeSelect.addEventListener("change", () => {
     optionsDiv.style.display = typeSelect.value === "multiple" ? "block" : "none";
+  });
+  // Remove question functionality
+  const removeBtn = qDiv.querySelector(".remove-question-btn");
+  removeBtn.addEventListener("click", () => {
+    questionsDiv.removeChild(qDiv);
   });
 
   questionsDiv.appendChild(qDiv);
