@@ -1,0 +1,123 @@
+// survey_detail.js
+
+// survey variable must be defined in template before this script
+// <script>const survey = {{ survey|tojson | safe }};</script>
+
+const form = document.getElementById("surveyForm");
+const draftBtn = document.getElementById("draftBtn");
+const submitBtn = document.getElementById("submitBtn");
+const backBtn = document.querySelector(".back-button");
+
+// ----------------------------
+// Load draft if exists
+// ----------------------------
+window.addEventListener("DOMContentLoaded", () => {
+    const saved = localStorage.getItem("drafts");
+    if (!saved) return;
+
+    const drafts = JSON.parse(saved);
+    const draft = drafts[survey.id];
+    if (!draft) return;
+
+    for (const r of draft.responses) {
+        const qid = r.question_id;
+        const value = r.answer;
+
+        const el = form.querySelector(`[name="q_${qid}"]`);
+        if (!el) continue;
+
+        if (el.type === "radio") {
+            const radio = form.querySelector(`[name="q_${qid}"][value="${value}"]`);
+            if (radio) radio.checked = true;
+        } else if (el.type === "checkbox") {
+            value.forEach(v => {
+                const cb = form.querySelector(`[name="q_${qid}"][value="${v}"]`);
+                if (cb) cb.checked = true;
+            });
+        } else if (el.tagName === "TEXTAREA" || el.tagName === "INPUT") {
+            el.value = value;
+        }
+    }
+});
+
+// ----------------------------
+// Save draft
+// ----------------------------
+draftBtn.onclick = () => {
+    const saved = localStorage.getItem("drafts");
+    const drafts = saved ? JSON.parse(saved) : {};
+
+    const responses = survey.questions.map(q => {
+        if (q.type === "multiple") {
+            const checked = form.querySelector(`input[name="q_${q.id}"]:checked`);
+            return { question_id: q.id, answer: checked ? checked.value : "" };
+        } else if (q.type === "checkbox") {
+            const checkedBoxes = form.querySelectorAll(`input[name="q_${q.id}"]:checked`);
+            const values = Array.from(checkedBoxes).map(cb => cb.value);
+            return { question_id: q.id, answer: values };
+        } else {
+            const field = form.querySelector(`[name="q_${q.id}"]`);
+            return { question_id: q.id, answer: field ? field.value : "" };
+        }
+    });
+
+    drafts[survey.id] = {
+        surveyTitle: survey.title,
+        responses: responses,
+        savedAt: new Date().toISOString()
+    };
+
+    localStorage.setItem("drafts", JSON.stringify(drafts));
+    alert(`Draft for "${survey.title}" saved!`);
+};
+
+// ----------------------------
+// Submit to backend using fetch
+// ----------------------------
+submitBtn.onclick = async (e) => {
+    e.preventDefault();
+
+    const responses = survey.questions.map(q => {
+        if (q.type === "multiple") {
+            const checked = form.querySelector(`input[name="q_${q.id}"]:checked`);
+            return { question_id: q.id, answer: checked ? checked.value : "" };
+        } else if (q.type === "checkbox") {
+            const checkedBoxes = form.querySelectorAll(`input[name="q_${q.id}"]:checked`);
+            const values = Array.from(checkedBoxes).map(cb => cb.value);
+            return { question_id: q.id, answer: values };
+        } else {
+            const field = form.querySelector(`[name="q_${q.id}"]`);
+            return { question_id: q.id, answer: field ? field.value : "" };
+        }
+    });
+
+    const payload = {
+        respondent: "anonymous",
+        answers: responses
+    };
+
+    try {
+        const res = await fetch(`/api/surveys/${survey.id}/responses`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) throw new Error('Network response was not ok');
+
+        // Clear draft for this survey
+        const saved = localStorage.getItem("drafts");
+        if (saved) {
+            const drafts = JSON.parse(saved);
+            delete drafts[survey.id];
+            localStorage.setItem("drafts", JSON.stringify(drafts));
+        }
+
+        alert("Response submitted successfully!");
+        backBtn.click(); // Go back to surveys list
+
+    } catch (err) {
+        console.error(err);
+        alert("Failed to submit response.");
+    }
+};

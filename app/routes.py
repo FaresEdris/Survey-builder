@@ -108,7 +108,7 @@ def get_response(response_id):
     response = response_service.get_response(response_id)
     return jsonify(response), 200
 
-@app.route("/surveys/<int:survey_id>/responses", methods=["POST"])
+@app.route("/api/surveys/<int:survey_id>/responses", methods=["POST"])
 def submit_response(survey_id):
     data = request.json
     respondent = data.get("respondent", "anonymous")
