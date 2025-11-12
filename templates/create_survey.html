@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Create a New Survey</h2>
+
+<form id="createSurveyForm">
+    <label for="title">Survey Title:</label><br>
+    <input type="text" id="title" name="title" required><br><br>
+
+    <label for="description">Description:</label><br>
+    <textarea id="description" name="description" required></textarea><br><br>
+
+    <div id="questions"></div>
+    <button type="button" id="addQuestionBtn">Add Question</button><br><br>
+
+    <button type="button" id="submitSurveyBtn">Publish Survey</button>
+</form>
+<script src="{{ url_for('static', filename='js/create_survey.js') }}"></script>
+{% endblock %}
+

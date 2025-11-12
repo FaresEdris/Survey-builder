@@ -28,7 +28,9 @@ def view_survey_detail(survey_id):
     survey = survey_service.get_survey(survey_id)
     return render_template("survey_detail.html", survey=survey)
 
-
+@app.route("/surveys/create")
+def view_create_survey():
+    return render_template("create_survey.html")
 # ----------------------------
 # API ROUTES (JSON ENDPOINTS)
 # ----------------------------
@@ -41,6 +43,27 @@ def api_get_surveys():
 def api_get_survey(survey_id):
     return jsonify(survey_service.get_survey(survey_id)), 200
 
+@app.route("/api/surveys", methods=["POST"])
+def create_survey():
+    data = request.get_json()
+
+    title = data.get("title")
+    description = data.get("description")
+    questions = data.get("questions", [])
+
+    if not title:
+        return jsonify({"error": "Title is required"}), 400
+    if not description:
+        return jsonify({"error": "Description is required"}), 400
+    if not questions:
+        return jsonify({"error": "At least one question is required"}), 400
+
+    new_survey = survey_service.add_survey(data)
+    for q in questions:
+        survey_service.add_question(new_survey["id"], q)
+
+    return jsonify({"message": "Survey created successfully", "survey": new_survey}), 201
+
 @app.route("/api/surveys/<int:survey_id>/responses", methods=["POST"])
 def api_submit_response(survey_id):
     data = request.json
@@ -48,6 +71,7 @@ def api_submit_response(survey_id):
     answers = data.get("answers", [])
     response = response_service.submit_response(survey_id, respondent, answers)
     return jsonify(response), 201
+
 
 @app.route("/surveys/<int:survey_id>", methods=["PUT"])
 def update_survey(survey_id):
@@ -108,13 +132,6 @@ def get_response(response_id):
     response = response_service.get_response(response_id)
     return jsonify(response), 200
 
-@app.route("/api/surveys/<int:survey_id>/responses", methods=["POST"])
-def submit_response(survey_id):
-    data = request.json
-    respondent = data.get("respondent", "anonymous")
-    answers = data.get("answers", [])
-    response = response_service.submit_response(survey_id, respondent, answers)
-    return jsonify(response), 201
 
 @app.route("/responses/<int:response_id>", methods=["DELETE"])
 def delete_response(response_id):
