@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ survey.title }}</h2>
+<p>{{ survey.description }}</p>
+
+<form id="surveyForm">
+  {% for q in survey.questions %}
+    <div>
+      <p>{{ q.text }}</p>
+      <input type="text" name="q_{{ q.id }}">
+    </div>
+  {% endfor %}
+
+  <button type="button" id="sendBtn">Send Survey</button>
+  <button type="button" id="draftBtn">Save as Draft</button>
+</form>
+
+<a href="{{ url_for('view_surveys') }}">← Back to all surveys</a>
+
+<script>
+const surveyId =  survey.id | tojson ;
+
+document.getElementById("sendBtn").onclick = async () => {
+  const answers = Array.from(document.querySelectorAll("input[name^='q_']")).map(i => ({
+    question_id: parseInt(i.name.split("_")[1]),
+    answer: i.value
+  }));
+
+  const response = await fetch(`/api/surveys/${surveyId}/responses`, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({respondent: "guest", answers})
+  });
+
+  if (response.ok) {
+    alert("Survey submitted!");
+  }
+};
+
+document.getElementById("draftBtn").onclick = () => {
+  const answers = Array.from(document.querySelectorAll("input[name^='q_']")).map(i => ({
+    question_id: parseInt(i.name.split("_")[1]),
+    answer: i.value
+  }));
+
+  const draft = {
+    surveyTitle: "{{ survey.title }}",
+    responses: answers,
+    savedAt: new Date().toISOString()
+  };
+
+  localStorage.setItem(`draft_${surveyId}`, JSON.stringify(draft));
+  alert("Draft saved locally!");
+};
+</script>
+
+{% endblock %}

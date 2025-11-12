@@ -131,5 +131,16 @@
                 "answer": "damn"
             }
         ]
+    },
+    {
+        "id": 12,
+        "survey_id": 13,
+        "respondent": "guest",
+        "answers": [
+            {
+                "question_id": 1,
+                "answer": "yes"
+            }
+        ]
     }
 ]

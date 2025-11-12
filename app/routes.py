@@ -1,9 +1,9 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from service import SurveyService, ResponseService
 from flask_cors import CORS
 
 
-app = Flask(__name__)
+app = Flask(__name__,template_folder='../templates', static_folder='../static')
 CORS(app)
 
 # Initialize services
@@ -11,35 +11,43 @@ survey_service = SurveyService()
 response_service = ResponseService(survey_service.survey_repo)
 
 # ----------------------------
-# Survey routes
+# HTML ROUTES (JINJA PAGES)
 # ----------------------------
 
-@app.route("/surveys", methods=["GET"])
-def get_all_surveys():
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+@app.route("/surveys/view")
+def view_surveys():
     surveys = survey_service.get_all_surveys()
-    return jsonify(surveys), 200
+    return render_template("surveys.html", surveys=surveys)
 
-@app.route("/surveys/<int:survey_id>", methods=["GET"])
-def get_survey(survey_id):
+@app.route("/surveys/<int:survey_id>/view")
+def view_survey_detail(survey_id):
     survey = survey_service.get_survey(survey_id)
-    return jsonify(survey), 200
+    return render_template("survey_detail.html", survey=survey)
 
-@app.route("/surveys", methods=["POST"])
-def add_survey():
+
+# ----------------------------
+# API ROUTES (JSON ENDPOINTS)
+# ----------------------------
+
+@app.route("/api/surveys", methods=["GET"])
+def api_get_surveys():
+    return jsonify(survey_service.get_all_surveys()), 200
+
+@app.route("/api/surveys/<int:survey_id>", methods=["GET"])
+def api_get_survey(survey_id):
+    return jsonify(survey_service.get_survey(survey_id)), 200
+
+@app.route("/api/surveys/<int:survey_id>/responses", methods=["POST"])
+def api_submit_response(survey_id):
     data = request.json
-    if not data.get("title") and not data.get("description"):
-        return jsonify({"error": "Title and Description are required"}), 400
-    if not data.get("title"):
-        return jsonify({"error": "Title is required"}), 400
-    if not data.get("questions") or not isinstance(data["questions"], list):
-        return jsonify({"error": "at least one question is required"}), 400
-    survey = survey_service.add_survey(data)
-    # the logic above does the same validation for questions, so this is redundant could be removed
-    #if data.get("questions")==[]:
-    #    return jsonify({"error": "At least one question is required"}), 400
-    for question in data.get("questions"):
-        survey_service.add_question(survey["id"], question)
-    return jsonify(survey), 201
+    respondent = data.get("respondent", "anonymous")
+    answers = data.get("answers", [])
+    response = response_service.submit_response(survey_id, respondent, answers)
+    return jsonify(response), 201
 
 @app.route("/surveys/<int:survey_id>", methods=["PUT"])
 def update_survey(survey_id):
