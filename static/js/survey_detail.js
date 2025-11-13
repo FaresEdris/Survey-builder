@@ -1,7 +1,8 @@
 const form = document.getElementById("surveyForm");
 const draftBtn = document.getElementById("draftBtn");
 const submitBtn = document.getElementById("submitBtn");
-const backBtn = document.querySelector(".back-button");
+const backBtn = document.getElementById("backBtn");
+const resetBtn = document.getElementById("resetBtn");
 
 // Load draft if exists
 window.addEventListener("DOMContentLoaded", () => {
@@ -37,49 +38,26 @@ window.addEventListener("DOMContentLoaded", () => {
 draftBtn.onclick = () => {
     const saved = localStorage.getItem("drafts");
     const drafts = saved ? JSON.parse(saved) : {};
-
-    const responses = survey.questions.map(q => {
-        if (q.type === "multiple") {
-            const checked = form.querySelector(`input[name="q_${q.id}"]:checked`);
-            return { question_id: q.id, answer: checked ? checked.value : "" };
-        } else if (q.type === "checkbox") {
-            const checkedBoxes = form.querySelectorAll(`input[name="q_${q.id}"]:checked`);
-            const values = Array.from(checkedBoxes).map(cb => cb.value);
-            return { question_id: q.id, answer: values };
-        } else {
-            const field = form.querySelector(`[name="q_${q.id}"]`);
-            return { question_id: q.id, answer: field ? field.value : "" };
-        }
-    });
-
+    const responses = readResponse(survey);
     drafts[survey.id] = {
         surveyTitle: survey.title,
         responses: responses,
         savedAt: new Date().toISOString()
     };
-
     localStorage.setItem("drafts", JSON.stringify(drafts));
     alert(`Draft for "${survey.title}" saved!`);
 };
 
+// Reset form
+resetBtn.onclick = () => {
+    clearDraft();
+    form.reset();
+}
+
 // Submit response
 submitBtn.onclick = async (e) => {
     e.preventDefault();
-
-    const responses = survey.questions.map(q => {
-        if (q.type === "multiple") {
-            const checked = form.querySelector(`input[name="q_${q.id}"]:checked`);
-            return { question_id: q.id, answer: checked ? checked.value : "" };
-        } else if (q.type === "checkbox") {
-            const checkedBoxes = form.querySelectorAll(`input[name="q_${q.id}"]:checked`);
-            const values = Array.from(checkedBoxes).map(cb => cb.value);
-            return { question_id: q.id, answer: values };
-        } else {
-            const field = form.querySelector(`[name="q_${q.id}"]`);
-            return { question_id: q.id, answer: field ? field.value : "" };
-        }
-    });
-
+    const responses = readResponse(survey);
     const payload = {
         respondent: "anonymous",
         answers: responses
@@ -93,20 +71,41 @@ submitBtn.onclick = async (e) => {
         });
 
         if (!res.ok) throw new Error('Network response was not ok');
-
-        // Clear draft for this survey
-        const saved = localStorage.getItem("drafts");
-        if (saved) {
-            const drafts = JSON.parse(saved);
-            delete drafts[survey.id];
-            localStorage.setItem("drafts", JSON.stringify(drafts));
-        }
-
+        clearDraft();
         alert("Response submitted successfully!");
-        backBtn.click(); // Go back to surveys list
+        backBtn.click();
 
     } catch (err) {
         console.error(err);
         alert("Failed to submit response.");
     }
 };
+
+function readResponse(survey) {
+    const responses = survey.questions.map(q => {
+        if (q.type === "multiple") {
+            const checked = form.querySelector(`input[name="q_${q.id}"]:checked`);
+            return { question_id: q.id, answer: checked ? checked.value : "" };
+        } else if (q.type === "checkbox") {
+            const checkedBoxes = form.querySelectorAll(`input[name="q_${q.id}"]:checked`);
+            const values = Array.from(checkedBoxes).map(cb => cb.value);
+            return { question_id: q.id, answer: values };
+        } else {
+            const field = form.querySelector(`[name="q_${q.id}"]`);
+            return { question_id: q.id, answer: field ? field.value : "" };
+        }
+    });
+    return responses;
+}
+// there is something wrong with if sata
+function clearDraft() {
+    const saved = localStorage.getItem("drafts");
+    savedDrafts = JSON.parse(saved);
+    savedDraft = savedDrafts ? savedDrafts[survey.id] : null;
+    if (savedDraft == null) return alert("No drafts to clear.");
+    const drafts = JSON.parse(saved);
+    delete drafts[survey.id];
+    localStorage.setItem("drafts", JSON.stringify(drafts));
+    alert(`Draft for "${survey.title}" cleared!`);
+}
+

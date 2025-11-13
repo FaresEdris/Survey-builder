@@ -31,9 +31,10 @@
     {% endfor %}
 
     <div class="buttons">
-        <a href="{{ url_for('view_surveys') }}" class="back-button">← Back to Surveys</a>
+        <a href="{{ url_for('view_surveys') }}" id="backBtn">← Back to Surveys</a>
         <button type="button" id="draftBtn">Save Draft</button>
         <button type="submit" id="submitBtn">Send Survey</button>
+        <button type="button" id="resetBtn">Reset</button>
     </div>
 </form>
 

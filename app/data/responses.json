@@ -153,5 +153,20 @@
                 "answer": "Good"
             }
         ]
+    },
+    {
+        "id": 14,
+        "survey_id": 2,
+        "respondent": "anonymous",
+        "answers": [
+            {
+                "question_id": 1,
+                "answer": "Very satisfied"
+            },
+            {
+                "question_id": 2,
+                "answer": "no"
+            }
+        ]
     }
 ]
