@@ -1,16 +1,9 @@
-// survey_detail.js
-
-// survey variable must be defined in template before this script
-// <script>const survey = {{ survey|tojson | safe }};</script>
-
 const form = document.getElementById("surveyForm");
 const draftBtn = document.getElementById("draftBtn");
 const submitBtn = document.getElementById("submitBtn");
 const backBtn = document.querySelector(".back-button");
 
-// ----------------------------
 // Load draft if exists
-// ----------------------------
 window.addEventListener("DOMContentLoaded", () => {
     const saved = localStorage.getItem("drafts");
     if (!saved) return;
@@ -40,9 +33,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// ----------------------------
 // Save draft
-// ----------------------------
 draftBtn.onclick = () => {
     const saved = localStorage.getItem("drafts");
     const drafts = saved ? JSON.parse(saved) : {};
@@ -71,9 +62,7 @@ draftBtn.onclick = () => {
     alert(`Draft for "${survey.title}" saved!`);
 };
 
-// ----------------------------
-// Submit to backend using fetch
-// ----------------------------
+// Submit response
 submitBtn.onclick = async (e) => {
     e.preventDefault();
 
