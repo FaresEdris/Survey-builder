@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "username": "testuser",
+        "password": "newpass"
+    },
+    {
+        "id": 2,
+        "username": "alice",
+        "password": "alicepass"
+    },
+    {
+        "id": 3,
+        "username": "bob",
+        "password": "bobpass"
+    },
+    {
+        "id": 4,
+        "username": "Faresedris",
+        "password": "scrypt:32768:8:1$qcydgxk575yczpom$e7beb265830a543aa80c802050f0dbc722add2eba4e722cea1e9e180185c6484a4b578bb2361a2d1ddcb752741b7f30820670d092fc58fdd72dd08dd4687752c"
+    }
+]

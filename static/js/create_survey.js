@@ -1,4 +1,3 @@
-console.log("Create Survey JS loaded!");
 document.addEventListener("DOMContentLoaded", () => {
   const questionsDiv = document.getElementById("questions");
   const addQuestionBtn = document.getElementById("addQuestionBtn");
@@ -32,14 +31,11 @@ document.addEventListener("DOMContentLoaded", () => {
       <hr>
     `;
 
-    // Toggle options field
     const typeSelect = qDiv.querySelector(".q-type");
     const optionsDiv = qDiv.querySelector(".options");
     typeSelect.addEventListener("change", () => {
       optionsDiv.style.display = typeSelect.value === "multiple" ? "block" : "none";
     });
-
-    // Remove question button
     qDiv.querySelector(".remove-question-btn").addEventListener("click", () => {
       questionsDiv.removeChild(qDiv);
     });
@@ -52,11 +48,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const title = document.getElementById("title").value.trim();
     const description = document.getElementById("description").value.trim();
 
-    /* if (!title || !description) {
+    if (!title || !description) {
       alert("Title and description are required.");
       return;
-    } */
-
+    } 
     const questionElements = document.querySelectorAll(".question");
     const questions = Array.from(questionElements).map(q => {
       const text = q.querySelector(".q-text").value.trim();

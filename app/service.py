@@ -121,4 +121,3 @@ class ResponseService:
         return full_survey
 
     
-

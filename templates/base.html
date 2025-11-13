@@ -4,16 +4,81 @@
     <meta charset="UTF-8">
     <title>Survey App</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* --- Minimal modern nav styling --- */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #fafafa;
+        }
+
+        header {
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 10px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        h1 a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-left a {
+            margin-right: 15px;
+            text-decoration: none;
+            color: #007bff;
+            font-weight: 500;
+        }
+
+        .nav-left a:hover {
+            text-decoration: underline;
+        }
+
+        .nav-right a {
+            margin-left: 10px;
+            text-decoration: none;
+        }
+
+        .nav-right span {
+            
+            font-weight: 500;
+        }
+
+        main {
+            padding: 20px;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <h1><a href="{{ url_for('index') }}">Survey App</a></h1>
         <nav>
-            <a href="{{ url_for('index') }}">Home</a>
-            <a href="{{ url_for('view_surveys') }}">View Surveys</a>
-            <a href="{{ url_for('view_create_survey') }}">Create Survey</a>
+            <div class="nav-left">
+                <h1><a href="{{ url_for('index') }}">Survey App</a></h1>
+                <a href="{{ url_for('index') }}">Home</a>
+                <a href="{{ url_for('view_surveys') }}">View Surveys</a>
+                <a href="{{ url_for('view_create_survey') }}">Create Survey</a>
+                <a href="{{ url_for('view_all_responses') }}">Responses</a>
+            </div>
+
+            <div class="nav-right">
+                {% if current_user.is_authenticated %}
+                    <span>Welcome, {{ current_user.username }}!</span>
+                    <a href="{{ url_for('logout') }}">Logout</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}">Login</a>
+                    <a href="{{ url_for('register') }}">Register</a>
+                {% endif %}
+            </div>
         </nav>
-        <hr>
     </header>
 
     <main>

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Survey Responses Overview</h2>
+
+{% if surveys %}
+  <ul>
+    {% for survey in surveys %}
+      <li>
+        <strong>{{ survey.title }}</strong> — {{ survey.description }}
+        <br>
+        <a href="{{ url_for('view_survey_responses', survey_id=survey.id) }}">
+          View Responses
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No surveys found yet.</p>
+{% endif %}
+
+<a href="{{ url_for('index') }}">⬅ Back to Home</a>
+{% endblock %}

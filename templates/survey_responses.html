@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Responses for Survey: {{ survey.title }}</h2>
+<p>{{ survey.description }}</p>
+<hr>
+
+{% if responses %}
+    {% for response in responses %}
+        <div style="border:1px solid #ccc; padding:10px; margin-bottom:15px;">
+            <h4>Response #{{ loop.index }}</h4>
+            {% if response.respondent %}
+                <p><strong>Respondent:</strong> {{ response.respondent }}</p>
+            {% endif %}
+            <ul>
+                {% for answer in response.answers %}
+                    {% set question = survey.questions | selectattr('id', 'equalto', answer.question_id) | first %}
+                    <li>
+                        <strong>{{ question.text if question else 'Unknown question' }}:</strong>
+                        {{ answer.answer }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No responses yet for this survey.</p>
+{% endif %}
+
+<a href="{{ url_for('view_all_responses') }}">⬅ Back to Responses Overview</a>
+{% endblock %}
