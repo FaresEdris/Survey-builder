@@ -198,5 +198,16 @@
                 "answer": "2"
             }
         ]
+    },
+    {
+        "id": 17,
+        "survey_id": 27,
+        "respondent": "anonymous",
+        "answers": [
+            {
+                "question_id": 1,
+                "answer": "yes"
+            }
+        ]
     }
 ]

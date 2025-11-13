@@ -37,13 +37,15 @@ def view_survey_detail(survey_id):
     return render_template("survey_detail.html", survey=survey)
 
 @app.route("/surveys/create")
+@login_required
 def view_create_survey():
     return render_template("create_survey.html")
 
 @app.route("/responses")
 def view_all_responses():
     surveys = survey_service.get_all_surveys() 
-    return render_template("responses_overview.html", surveys=surveys)
+    user_surveys = [s for s in surveys if s.get("creator") == current_user.username]
+    return render_template("responses_overview.html", surveys=user_surveys)
 
 @app.route("/surveys/<int:survey_id>/responses")
 def view_survey_responses(survey_id):
@@ -108,12 +110,19 @@ def api_get_survey(survey_id):
     return jsonify(survey_service.get_survey(survey_id)), 200
 
 @app.route("/api/surveys", methods=["POST"])
+@login_required
 def create_survey():
     data = request.get_json()
 
     title = data.get("title")
     description = data.get("description")
     questions = data.get("questions", [])
+    survey_data = {
+            "title": title,
+            "description": description,
+            "questions": [],
+            "creator": current_user.username
+        }
 
     if not title:
         return jsonify({"error": "Title is required"}), 400
@@ -122,7 +131,7 @@ def create_survey():
     if not questions:
         return jsonify({"error": "At least one question is required"}), 400
 
-    new_survey = survey_service.add_survey(data)
+    new_survey = survey_service.add_survey(survey_data)
     for q in questions:
         survey_service.add_question(new_survey["id"], q)
 
