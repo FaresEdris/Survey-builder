@@ -13,7 +13,8 @@ def survey_mapper(item, data):
         "title": item.get("title"),
         "description": item.get("description", ""),
         "questions": [], 
-        "creator": item.get("creator") 
+        "creator": item.get("creator"),
+        "archived": False          
     }
 
 def response_mapper(item, data):

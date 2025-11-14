@@ -1,31 +1,44 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Responses for Survey: {{ survey.title }}</h2>
-<p>{{ survey.description }}</p>
+<h2>Responses for: {{ survey.title }}</h2>
+
+{% if survey.archived %}
+    <p style="color: red;"><strong>This survey is archived.</strong></p>
+{% endif %}
+
+{% if current_user.is_authenticated and survey.creator == current_user.username %}
+    {% if survey.archived %}
+        <form method="POST" action="{{ url_for('unarchive_survey', survey_id=survey.id) }}">
+            <button type="submit">Unarchive</button>
+        </form>
+    {% else %}
+        <form method="POST" action="{{ url_for('archive_survey', survey_id=survey.id) }}">
+            <button type="submit">Archive</button>
+        </form>
+    {% endif %}
+{% endif %}
+
 <hr>
 
 {% if responses %}
-    {% for response in responses %}
-        <div style="border:1px solid #ccc; padding:10px; margin-bottom:15px;">
-            <h4>Response #{{ loop.index }}</h4>
-            {% if response.respondent %}
-                <p><strong>Respondent:</strong> {{ response.respondent }}</p>
-            {% endif %}
+    <ul>
+    {% for r in responses %}
+        <li>
+            <strong>Respondent:</strong> {{ r.respondent or "Anonymous" }}<br>
+            <strong>Answers:</strong>
             <ul>
-                {% for answer in response.answers %}
-                    {% set question = survey.questions | selectattr('id', 'equalto', answer.question_id) | first %}
-                    <li>
-                        <strong>{{ question.text if question else 'Unknown question' }}:</strong>
-                        {{ answer.answer }}
-                    </li>
+                {% for ans in r.answers %}
+                    <li>Q{{ ans.question_id }}: {{ ans.answer }}</li>
                 {% endfor %}
             </ul>
-        </div>
+        </li>
     {% endfor %}
+    </ul>
 {% else %}
-    <p>No responses yet for this survey.</p>
+    <p>No responses yet.</p>
 {% endif %}
 
-<a href="{{ url_for('view_all_responses') }}">⬅ Back to Responses Overview</a>
+<a href="{{ url_for('view_all_responses') }}">Back to all surveys</a>
+
 {% endblock %}

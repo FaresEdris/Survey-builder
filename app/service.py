@@ -24,19 +24,35 @@ class SurveyService:
 
     def get_paginated(self, page=1, per_page=15):
         all_surveys = self.survey_repo.get_items()
-        total = len(all_surveys)
+        visible_surveys = [s for s in all_surveys if not s["archived"]]
+        total = len(visible_surveys)
 
         start = (page - 1) * per_page
         end = start + per_page
 
         return {
-            "surveys": all_surveys[start:end],
+            "surveys": visible_surveys[start:end],
             "total": total,
             "page": page,
             "has_next": end < total,
             "has_prev": start > 0
         }
 
+    def archive(self, survey_id,user):
+        survey = self.survey_repo.get_by_id(survey_id)
+
+        if survey["creator"] != user.username:
+            raise PermissionError("You cannot archive surveys you did not create.")
+
+        return self.survey_repo.update(survey_id, {"archived": True})
+
+
+    def unarchive(self, survey_id,user):
+        survey = self.survey_repo.get_by_id(survey_id)
+
+        if survey["creator"] != user.username:
+            raise PermissionError("You cannot unarchive surveys you did not create.")
+        return self.survey_repo.update(survey_id, {"archived": False})
 
     ### question methods ###
 
