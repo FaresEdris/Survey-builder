@@ -1,4 +1,5 @@
 from werkzeug.security import generate_password_hash
+from datetime import datetime
 
 
 
@@ -14,7 +15,8 @@ def survey_mapper(item, data):
         "description": item.get("description", ""),
         "questions": [], 
         "creator": item.get("creator"),
-        "archived": False          
+        "archived": False,
+        "created_at": datetime.utcnow().isoformat()           
     }
 
 def response_mapper(item, data):

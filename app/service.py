@@ -6,7 +6,9 @@ class SurveyService:
         self.survey_repo = Repository("surveys", survey_mapper)
     ### survey methods ###
     def get_all_surveys(self):
-        return self.survey_repo.get_items()
+        surveys = self.survey_repo.get_items()
+        surveys.sort(key=lambda s: s.get("created_at", ""), reverse=True)
+        return surveys
     
     def get_survey(self, survey_id):
         return self.survey_repo.get_by_id(survey_id)
@@ -25,6 +27,7 @@ class SurveyService:
     def get_paginated(self, page=1, per_page=15):
         all_surveys = self.survey_repo.get_items()
         visible_surveys = [s for s in all_surveys if not s["archived"]]
+        visible_surveys.sort(key=lambda s: s.get("created_at", ""), reverse=True)
         total = len(visible_surveys)
 
         start = (page - 1) * per_page
