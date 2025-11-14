@@ -117,11 +117,12 @@ def create_survey():
     title = data.get("title")
     description = data.get("description")
     questions = data.get("questions", [])
+    user_name = current_user.username
     survey_data = {
             "title": title,
             "description": description,
             "questions": [],
-            "creator": current_user.username
+            "creator": str(user_name)
         }
 
     if not title:
