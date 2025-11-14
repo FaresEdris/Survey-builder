@@ -28,8 +28,9 @@ def index():
 
 @app.route("/surveys/view")
 def view_surveys():
-    surveys = survey_service.get_all_surveys()
-    return render_template("surveys.html", surveys=surveys)
+    page = int(request.args.get("page", 1))
+    data = survey_service.get_paginated(page=page)
+    return render_template("surveys.html", **data)
 
 @app.route("/surveys/<int:survey_id>/view")
 def view_survey_detail(survey_id):
@@ -122,7 +123,7 @@ def create_survey():
             "title": title,
             "description": description,
             "questions": [],
-            "creator": str(user_name)
+            "creator": user_name
         }
 
     if not title:

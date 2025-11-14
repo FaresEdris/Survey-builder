@@ -32,5 +32,5 @@ def user_mapper(item, data):
     return {
         "id": new_id,
         "username": item.get("username"),
-        "password": generate_password_hash(item.get("password"))  
+        "password": generate_password_hash(item.get("password"),salt_length=8)  
     }

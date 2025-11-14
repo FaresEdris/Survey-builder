@@ -20,6 +20,24 @@ class SurveyService:
     def update_survey(self, survey_id, updates):
         return self.survey_repo.update(survey_id, updates)
     
+    ## new addations
+
+    def get_paginated(self, page=1, per_page=15):
+        all_surveys = self.survey_repo.get_items()
+        total = len(all_surveys)
+
+        start = (page - 1) * per_page
+        end = start + per_page
+
+        return {
+            "surveys": all_surveys[start:end],
+            "total": total,
+            "page": page,
+            "has_next": end < total,
+            "has_prev": start > 0
+        }
+
+
     ### question methods ###
 
     def get_all_questions(self, survey_id):

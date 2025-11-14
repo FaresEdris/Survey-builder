@@ -3,19 +3,32 @@
 {% block content %}
 <h2>All Surveys</h2>
 
-{% if surveys %}
 <ul>
-    {% for survey in surveys %}
+    {% for s in surveys %}
         <li>
-            <strong>{{ survey.title }}</strong> — {{ survey.description }}
-            <br>
-            <a href="{{ url_for('view_survey_detail', survey_id=survey.id) }}">View Details</a>
+            <a href="{{ url_for('view_survey_detail', survey_id=s.id) }}">
+                {{ s.title }}
+            </a>
+            <span style="color:#777; font-size: 0.9em;">
+                {% if s.creator %}
+                (created by {{ s.creator }})
+                {% endif %}
+            </span>
         </li>
     {% endfor %}
 </ul>
-{% else %}
-<p>No surveys found.</p>
-{% endif %}
 
-<a href="{{ url_for('index') }}">Back to Home</a>
+<!-- Pagination Controls -->
+<div style="margin-top: 20px; text-align:center;">
+    {% if has_prev %}
+        <a href="{{ url_for('view_surveys', page=page-1) }}">⬅ Previous</a>
+    {% endif %}
+
+    <span style="margin: 0 15px;">Page {{ page }}</span>
+
+    {% if has_next %}
+        <a href="{{ url_for('view_surveys', page=page+1) }}">Next ➡</a>
+    {% endif %}
+</div>
+
 {% endblock %}
