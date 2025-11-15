@@ -20,57 +20,90 @@ class SurveyService:
     def delete_survey(self, survey_id):
         return self.survey_repo.delete(survey_id)
     
+    def _as_list(self, form, key):
+        """Return a list for key whether form stores list or single value."""
+        v = form.get(key)
+        if v is None:
+            return []
+        return v if isinstance(v, list) else [v]
 
-    def update_survey_from_form(self, survey_id, form_data):
+    def _first(self, form, key, default=""):
+        v = form.get(key)
+        if v is None:
+            return default
+        return v[0] if isinstance(v, list) else v
+
+    def update_survey_from_form(self, survey_id, form):
+        """
+        form: mapping produced by request.form.to_dict(flat=False)
+              or your test-like dict with lists.
+        """
         surveys = self.survey_repo.get_items()
         survey = next((s for s in surveys if s["id"] == survey_id), None)
         if not survey:
             raise LookupError("Survey not found")
 
-        # ---- Update basic fields ----
-        survey["title"] = form_data.get("title", [survey["title"]])[0].strip() or survey["title"]
-        survey["description"] = form_data.get("description", [survey["description"]])[0].strip() or survey["description"]
+        # Update title/description (support list or single)
+        survey["title"] = self._first(form, "title", survey.get("title", "")).strip() or survey["title"]
+        survey["description"] = self._first(form, "description", survey.get("description", "")).strip() or survey["description"]
 
-        # ---- Update existing questions ----
-        existing_ids = form_data.get("question_id", [])
-        texts = form_data.get("question_text", [])
-        options_list = form_data.get("question_options", [])
-        delete_flags = form_data.get("question_delete", [])
+        # Collect question ids (support both repeated 'question_id' and explicit keys)
+        qid_list = [int(v) for v in self._as_list(form, "question_id") if str(v).strip()]
 
-        q_by_id = {q["id"]: q for q in survey["questions"]}
+        # Build quick lookup for existing questions
+        q_by_id = {q["id"]: q for q in survey.get("questions", [])}
 
-        for idx, qid_str in enumerate(existing_ids):
-            try:
-                qid = int(qid_str)
-            except ValueError:
-                continue
-            if qid not in q_by_id:
+        # For each existing question id, read keyed fields first, fall back to arrays
+        for idx, qid in enumerate(qid_list):
+            q = q_by_id.get(qid)
+            if not q:
                 continue
 
-            q = q_by_id[qid]
-
-            # Update question text
-            if idx < len(texts):
-                new_text = texts[idx].strip()
+            # 1) text: prefer keyed name question_text_<id> else array position
+            text_key = f"question_text_{qid}"
+            if text_key in form:
+                new_text = self._first(form, text_key).strip()
                 if new_text:
                     q["text"] = new_text
+            else:
+                # fallback to array-style by index
+                texts = self._as_list(form, "question_text")
+                if idx < len(texts):
+                    new_text = texts[idx].strip()
+                    if new_text:
+                        q["text"] = new_text
 
-            # Update options only for multiple-choice, if provided
-            if q.get("type") == "multiple" and idx < len(options_list):
-                raw_opts = options_list[idx].strip()
-                if raw_opts:  # only update if user entered something
-                    q["options"] = [o.strip() for o in raw_opts.split(",") if o.strip()]
+            # 2) options (multiple-choice): prefer keyed option, else array style
+            if q.get("type") == "multiple":
+                opt_key = f"question_options_{qid}"
+                if opt_key in form:
+                    raw = self._first(form, opt_key).strip()
+                    if raw != "":
+                        q["options"] = [o.strip() for o in raw.split(",") if o.strip()]
+                    # if empty string -> treat as "no change" (keeps existing options)
+                else:
+                    opts_arr = self._as_list(form, "question_options")
+                    if idx < len(opts_arr):
+                        raw = opts_arr[idx].strip()
+                        if raw != "":
+                            q["options"] = [o.strip() for o in raw.split(",") if o.strip()]
 
-            # Soft delete
-            q["deleted"] = str(qid) in delete_flags
+            # 3) deleted flag: prefer keyed checkbox name, otherwise array-style values
+            del_key = f"question_delete_{qid}"
+            if del_key in form:
+                # checkbox present => checked; value "1" or so
+                q["deleted"] = True if self._first(form, del_key) else True
+            else:
+                # fallback: check array of deletes (values are ids)
+                deletes = self._as_list(form, "question_delete")
+                q["deleted"] = str(qid) in [str(x) for x in deletes]
 
-        # ---- Add new questions ----
-        new_texts = form_data.get("new_question_text", [])
-        new_types = form_data.get("new_question_type", [])
-        new_opts = form_data.get("new_question_options", [])
+        # Handle new questions (array-style)
+        new_texts = self._as_list(form, "new_question_text")
+        new_types = self._as_list(form, "new_question_type")
+        new_opts = self._as_list(form, "new_question_options")
 
-        max_q_id = max((q["id"] for q in survey["questions"]), default=0)
-
+        max_q_id = max((q["id"] for q in survey.get("questions", [])), default=0)
         for i, txt in enumerate(new_texts):
             text = txt.strip()
             if not text:
@@ -90,14 +123,12 @@ class SurveyService:
                     question["options"] = [o.strip() for o in raw.split(",") if o.strip()]
             survey["questions"].append(question)
 
-        # ---- Update timestamp ----
+        # timestamp
         survey["updated_at"] = datetime.now(timezone.utc).isoformat()
 
-        # ---- Persist ----
+        # persist
         self.survey_repo.save_db(surveys)
-
         return survey
-
     
     ## new addations
 

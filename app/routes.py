@@ -111,21 +111,6 @@ def view_all_responses():
     user_surveys = [s for s in surveys if s.get("creator") == current_user.username]
     return render_template("responses_overview.html", surveys=user_surveys)
 
-@app.route("/responses/all")
-@login_required
-def view_all_responses2():
-    surveys = survey_service.get_all_surveys()
-
-    # Show only user’s surveys OR public non-archived surveys
-    visible = []
-    for s in surveys:
-        if s["creator"] == current_user.username:
-            visible.append(s)
-        elif not s["archived"]:
-            visible.append(s)
-
-    return render_template("responses.html", surveys=visible)
-
 # should delete
 @app.route("/surveys/<int:survey_id>/responses")
 def view_survey_responses(survey_id):
@@ -136,22 +121,6 @@ def view_survey_responses(survey_id):
     responses = response_service.get_responses(survey_id=survey_id)
 
     return render_template("survey_responses.html", survey=survey, responses=responses)
-# should delete
-@app.route("/responses/<int:survey_id>")
-@login_required
-def view_survey_responses2(survey_id):
-    survey = survey_service.get_survey(survey_id)
-
-    # Only creator can see archived surveys
-    if survey["archived"] and survey["creator"] != current_user.username:
-        flash("This survey is archived.")
-        return redirect(url_for("view_all_responses"))
-
-    responses = response_service.get_responses(survey_id=survey_id)
-
-    return render_template("survey_responses.html",
-                           survey=survey,
-                           responses=responses)
 
 # login route
 

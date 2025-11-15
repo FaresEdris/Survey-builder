@@ -9,23 +9,40 @@
     <label>Description</label><br>
     <textarea name="description" rows="3" style="width:100%;">{{ survey.description }}</textarea><br><br>
 
-    <h3>Existing Questions</h3>
-    {% for q in survey.questions %}
-        <div style="border:1px solid #ddd; padding:10px; margin-bottom:8px;">
-            <input type="hidden" name="question_id" value="{{ q.id }}">
-            <label>Question {{ loop.index }} (type: {{ q.type }})</label><br>
-            <input type="text" name="question_text" value="{{ q.text }}" style="width:100%;"><br>
-            <input type="hidden" name="question_type" value="{{ q.type }}">
-            {% if q.type == 'multiple' %}
-                <label>Options (comma separated)</label><br>
-                <input type="text" name="question_options" value="{{ q.options | join(', ') }}" style="width:100%;"><br>
-            {% endif %}
-            <label>
-                <input type="checkbox" name="question_delete" value="{{ q.id }}" {% if q.deleted %}checked{% endif %}>
-                Mark question as deleted (soft-delete)
-            </label>
-        </div>
-    {% endfor %}
+
+<h3>Existing Questions</h3>
+{% for q in survey.questions %}
+  <div style="border:1px solid #ddd; padding:10px; margin-bottom:8px;">
+      <!-- keep an array of ids for iteration/backwards compat -->
+      <input type="hidden" name="question_id" value="{{ q.id }}">
+
+      <label>Question {{ loop.index }} (type: {{ q.type }})</label><br>
+
+      <!-- explicit per-id field names -->
+      <input type="text" name="question_text_{{ q.id }}" value="{{ q.text }}" style="width:100%;"><br>
+
+      <input type="hidden" name="question_type_{{ q.id }}" value="{{ q.type }}">
+
+      {% if q.type == 'multiple' %}
+        <label>Options (comma separated)</label><br>
+        <input type="text"
+               name="question_options_{{ q.id }}"
+               value="{{ q.options | join(', ') }}"
+               style="width:100%;"><br>
+      {% else %}
+        <!-- keep a hidden field so server-side fallback still sees something -->
+        <input type="hidden" name="question_options_{{ q.id }}" value="">
+      {% endif %}
+
+      <label>
+        <input type="checkbox" name="question_delete_{{ q.id }}" value="1"
+               {% if q.deleted %}checked{% endif %}>
+        Mark question as deleted
+      </label>
+  </div>
+{% endfor %}
+
+
 
     <h3>Add New Questions</h3>
     <!-- Provide three empty slots for new questions -->
