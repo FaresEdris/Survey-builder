@@ -1,5 +1,6 @@
 from repository import Repository
 from mapper import survey_mapper,response_mapper,get_max_id
+from datetime import datetime, timezone
 
 class SurveyService:
     def __init__(self):
@@ -19,8 +20,84 @@ class SurveyService:
     def delete_survey(self, survey_id):
         return self.survey_repo.delete(survey_id)
     
-    def update_survey(self, survey_id, updates):
-        return self.survey_repo.update(survey_id, updates)
+
+    def update_survey_from_form(self, survey_id, form_data):
+        surveys = self.survey_repo.get_items()
+        survey = next((s for s in surveys if s["id"] == survey_id), None)
+        if not survey:
+            raise LookupError("Survey not found")
+
+        # ---- Update basic fields ----
+        survey["title"] = form_data.get("title", [survey["title"]])[0].strip() or survey["title"]
+        survey["description"] = form_data.get("description", [survey["description"]])[0].strip() or survey["description"]
+
+        # ---- Update existing questions ----
+        existing_ids = form_data.get("question_id", [])
+        texts = form_data.get("question_text", [])
+        options_list = form_data.get("question_options", [])
+        delete_flags = form_data.get("question_delete", [])
+
+        q_by_id = {q["id"]: q for q in survey["questions"]}
+
+        for idx, qid_str in enumerate(existing_ids):
+            try:
+                qid = int(qid_str)
+            except ValueError:
+                continue
+            if qid not in q_by_id:
+                continue
+
+            q = q_by_id[qid]
+
+            # Update question text
+            if idx < len(texts):
+                new_text = texts[idx].strip()
+                if new_text:
+                    q["text"] = new_text
+
+            # Update options only for multiple-choice, if provided
+            if q.get("type") == "multiple" and idx < len(options_list):
+                raw_opts = options_list[idx].strip()
+                if raw_opts:  # only update if user entered something
+                    q["options"] = [o.strip() for o in raw_opts.split(",") if o.strip()]
+
+            # Soft delete
+            q["deleted"] = str(qid) in delete_flags
+
+        # ---- Add new questions ----
+        new_texts = form_data.get("new_question_text", [])
+        new_types = form_data.get("new_question_type", [])
+        new_opts = form_data.get("new_question_options", [])
+
+        max_q_id = max((q["id"] for q in survey["questions"]), default=0)
+
+        for i, txt in enumerate(new_texts):
+            text = txt.strip()
+            if not text:
+                continue
+            qtype = new_types[i] if i < len(new_types) else "text"
+            max_q_id += 1
+            question = {
+                "id": max_q_id,
+                "text": text,
+                "type": qtype,
+                "options": [],
+                "deleted": False
+            }
+            if qtype == "multiple" and i < len(new_opts):
+                raw = new_opts[i].strip()
+                if raw:
+                    question["options"] = [o.strip() for o in raw.split(",") if o.strip()]
+            survey["questions"].append(question)
+
+        # ---- Update timestamp ----
+        survey["updated_at"] = datetime.now(timezone.utc).isoformat()
+
+        # ---- Persist ----
+        self.survey_repo.save_db(surveys)
+
+        return survey
+
     
     ## new addations
 

@@ -40,102 +40,24 @@ def survey_responses_list(survey_id):
 @login_required
 def edit_survey(survey_id):
     survey = survey_service.get_survey(survey_id)
-    if not survey: return "Survey not found", 404
-    if survey.get("creator") != current_user.username: abort(403)
-    if request.method == "GET": return render_template("survey_edit.html", survey=survey)
+    if not survey:
+        return "Survey not found", 404
+    if survey.get("creator") != current_user.username:
+        abort(403)
 
-    title = request.form.get("title", "").strip()
-    description = request.form.get("description", "").strip()
-    if not title:
-        flash("Title is required.")
-        return redirect(url_for("edit_survey", survey_id=survey_id))
-    
-    existing_ids = request.form.getlist("question_id")         # strings of ints
-    texts = request.form.getlist("question_text")
-    types = request.form.getlist("question_type")
-    options_list = request.form.getlist("question_options")    # comma-separated strings
-    delete_flags = request.form.getlist("question_delete")     # list of ids that were checked for deletion
+    if request.method == "GET":
+        return render_template("survey_edit.html", survey=survey)
 
-    # Build map by id for quick update
-    q_by_id = {q["id"]: q for q in survey["questions"]}
-
-    # Update existing questions (do not allow changing type)
-    for idx, qid_str in enumerate(existing_ids):
-        try:
-            qid = int(qid_str)
-        except ValueError:
-            continue
-        if qid not in q_by_id:
-            continue
-
-        qobj = q_by_id[qid]
-        new_text = texts[idx].strip() if idx < len(texts) else qobj["text"]
-        qobj["text"] = new_text or qobj["text"]
-        if qobj.get("type") == "multiple":
-            raw_options = options_list[idx] if idx < len(options_list) else ""
-            opts = [o.strip() for o in raw_options.split(",") if o.strip()]
-            qobj["options"] = opts
-        if str(qid) in delete_flags: qobj["deleted"] = True
-        else: qobj["deleted"] = False
-
-    # 3) Process new questions (if any)
-    # Expect fields: new_question_text (list), new_question_type (list), new_question_options (list)
-    new_texts = request.form.getlist("new_question_text")
-    new_types = request.form.getlist("new_question_type")
-    new_opts = request.form.getlist("new_question_options")
-
-    max_q_id = max((q["id"] for q in survey["questions"]), default=0)
-    for i, txt in enumerate(new_texts):
-        text = txt.strip()
-        if not text:
-            continue
-        qtype = new_types[i] if i < len(new_types) else "text"
-        max_q_id += 1
-        question = {
-            "id": max_q_id,
-            "text": text,
-            "type": qtype,
-            "options": [],
-            "deleted": False
-        }
-        if qtype == "multiple":
-            raw = new_opts[i] if i < len(new_opts) else ""
-            question["options"] = [o.strip() for o in raw.split(",") if o.strip()]
-        survey["questions"].append(question)
-
-    # 4) Save updated survey (update only title/description/questions)
-    survey["title"] = title
-    survey["description"] = description
-    # optional: updated_at timestamp
-    from datetime import datetime
-    survey["updated_at"] = datetime.utcnow().isoformat()
-
-    # Persist using the repo/service
-    # If you have survey_service.update_survey(survey_id, updates) use it, otherwise write directly:
     try:
-        # attempt to use service method if exists
-        updated = survey_service.update_survey(survey_id, {
-            "title": survey["title"],
-            "description": survey["description"],
-            "questions": survey["questions"],
-            "updated_at": survey["updated_at"]
-        })
-    except Exception:
-        # fallback to repository direct update (assumes survey_service exposes survey_repo)
-        try:
-            survey_service.survey_repo.update(survey_id, {
-                "title": survey["title"],
-                "description": survey["description"],
-                "questions": survey["questions"],
-                "updated_at": survey["updated_at"]
-            })
-            updated = survey_service.get_survey(survey_id)
-        except Exception as e:
-            flash("Failed to save survey: " + str(e))
-            return redirect(url_for("edit_survey", survey_id=survey_id))
+        updates = request.form.to_dict(flat=False)  
+        survey_service.update_survey_from_form(survey_id, updates)
+        flash("Survey updated successfully.")
+    except Exception as e:
+        flash(f"Failed to update survey: {e}")
+        return redirect(url_for("edit_survey", survey_id=survey_id))
 
-    flash("Survey updated.")
     return redirect(url_for("survey_control_page", survey_id=survey_id))
+
 
 @app.route("/surveys/<int:survey_id>/delete", methods=["POST"])
 @login_required

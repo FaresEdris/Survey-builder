@@ -1,1 +1,37 @@
-[]
+[
+    {
+        "id": 1,
+        "title": "Updated Survey2",
+        "description": "Updated description2",
+        "questions": [
+            {
+                "id": 1,
+                "text": "Q1",
+                "type": "text",
+                "options": [],
+                "deleted": true
+            },
+            {
+                "id": 2,
+                "text": "Q2",
+                "type": "multiple",
+                "options": [
+                    "opt1",
+                    "opt3"
+                ],
+                "deleted": false
+            },
+            {
+                "id": 3,
+                "text": "Q3",
+                "type": "text",
+                "options": [],
+                "deleted": false
+            }
+        ],
+        "creator": "Faresedris",
+        "archived": false,
+        "created_at": "2025-11-15T14:21:08.071768",
+        "updated_at": "2025-11-15T14:32:58.168286+00:00"
+    }
+]

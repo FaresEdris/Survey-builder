@@ -1,1 +1,21 @@
-[]
+[
+    {
+        "id": 1,
+        "survey_id": 1,
+        "respondent": "anonymous",
+        "answers": [
+            {
+                "question_id": 1,
+                "answer": "yes"
+            },
+            {
+                "question_id": 2,
+                "answer": "opt1"
+            },
+            {
+                "question_id": 3,
+                "answer": "no"
+            }
+        ]
+    }
+]

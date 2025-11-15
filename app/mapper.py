@@ -16,7 +16,8 @@ def survey_mapper(item, data):
         "questions": [], 
         "creator": item.get("creator"),
         "archived": False,
-        "created_at": datetime.utcnow().isoformat()           
+        "created_at": datetime.utcnow().isoformat(),
+        "updated_at": None           
     }
 
 def response_mapper(item, data):
