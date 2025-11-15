@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Responses for: {{ survey.title }}</h2>
+
+{% if survey.archived %}
+    <p style="color:red;"><strong>This survey is archived.</strong></p>
+{% endif %}
+
+<p><a href="{{ url_for('survey_control_page', survey_id=survey.id) }}">← Back to Survey Controls</a></p>
+
+{% if responses %}
+    {% for r in responses %}
+        <div style="border:1px solid #ddd; padding:10px; margin-bottom:10px;">
+            <strong>Response #{{ r.id }}</strong>
+            <p><strong>Respondent:</strong> {{ r.respondent or "Anonymous" }}</p>
+            <p><strong>Submitted at:</strong> {{ r.get('submitted_at', 'n/a') }}</p>
+
+            <ul>
+            {% for ans in r.answers %}
+                {% set q = survey.questions | selectattr('id', 'equalto', ans.question_id) | first %}
+                <li>
+                    <strong>{{ q.text if q else ('Question '+ans.question_id|string) }}:</strong>
+                    {{ ans.answer }}
+                </li>
+            {% endfor %}
+            </ul>
+
+            <!-- Optional: delete single response -->
+            <form method="POST" action="{{ url_for('delete_response_route', response_id=r.id) }}"
+                  onsubmit="return confirm('Delete this response?');">
+                <button type="submit">Delete Response</button>
+            </form>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No responses yet.</p>
+{% endif %}
+
+{% endblock %}

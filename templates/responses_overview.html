@@ -9,7 +9,7 @@
       <li>
         <strong>{{ survey.title }}</strong> — {{ survey.description }}
         <br>
-        <a href="{{ url_for('view_survey_responses', survey_id=survey.id) }}">
+        <a href="{{ url_for('survey_control_page', survey_id=survey.id) }}">
           View Responses
         </a>
       </li>

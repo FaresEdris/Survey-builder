@@ -79,7 +79,8 @@ class SurveyService:
                     "id": q_id,
                     "text": question_data.get("text"),
                     "type": question_data.get("type", "text"),
-                    "options": question_data.get("options", [])
+                    "options": question_data.get("options", []),
+                    "deleted": False
                 }
                 survey["questions"].append(new_question)
                 self.survey_repo.save_db(surveys)
@@ -133,6 +134,13 @@ class ResponseService:
     
     def delete_response(self, response_id):
         return self.response_repo.delete(response_id)
+    
+        
+    def delete_responses_by_survey(self, survey_id):
+        responses= self.get_responses()
+        responses= [r for r in responses if int(r["survey_id"]) != int(survey_id)]
+        self.response_repo.save_db(responses)
+        return True
 
     def submit_response(self, survey_id, respondent, answers):
         survey = self.survey_repo.get_by_id(survey_id)

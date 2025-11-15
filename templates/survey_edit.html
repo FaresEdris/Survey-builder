@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Edit Survey</h2>
+
+<form method="POST" action="{{ url_for('edit_survey', survey_id=survey.id) }}">
+    <label>Title</label><br>
+    <input type="text" name="title" value="{{ survey.title }}" required style="width:100%;"><br><br>
+
+    <label>Description</label><br>
+    <textarea name="description" rows="3" style="width:100%;">{{ survey.description }}</textarea><br><br>
+
+    <h3>Existing Questions</h3>
+    {% for q in survey.questions %}
+        <div style="border:1px solid #ddd; padding:10px; margin-bottom:8px;">
+            <input type="hidden" name="question_id" value="{{ q.id }}">
+            <label>Question {{ loop.index }} (type: {{ q.type }})</label><br>
+            <input type="text" name="question_text" value="{{ q.text }}" style="width:100%;"><br>
+            <input type="hidden" name="question_type" value="{{ q.type }}">
+            {% if q.type == 'multiple' %}
+                <label>Options (comma separated)</label><br>
+                <input type="text" name="question_options" value="{{ q.options | join(', ') }}" style="width:100%;"><br>
+            {% endif %}
+            <label>
+                <input type="checkbox" name="question_delete" value="{{ q.id }}" {% if q.deleted %}checked{% endif %}>
+                Mark question as deleted (soft-delete)
+            </label>
+        </div>
+    {% endfor %}
+
+    <h3>Add New Questions</h3>
+    <!-- Provide three empty slots for new questions -->
+    {% for i in range(3) %}
+    <div style="border:1px dashed #ccc; padding:10px; margin-bottom:8px;">
+        <label>New Question {{ i+1 }}</label><br>
+        <input type="text" name="new_question_text" placeholder="Question text" style="width:100%;"><br>
+        <label>Type</label>
+        <select name="new_question_type">
+            <option value="text">Text</option>
+            <option value="multiple">Multiple choice</option>
+        </select><br>
+        <label>Options (comma separated, for multiple choice)</label><br>
+        <input type="text" name="new_question_options" placeholder="opt1, opt2, opt3" style="width:100%;"><br>
+    </div>
+    {% endfor %}
+
+    <button type="submit">Save changes</button>
+    <a href="{{ url_for('survey_control_page', survey_id=survey.id) }}">Cancel</a>
+</form>
+{% endblock %}

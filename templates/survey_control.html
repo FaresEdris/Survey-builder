@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>{{ survey.title }}</h2>
+<p>{{ survey.description }}</p>
+
+<p><small>Created: {{ survey.created_at }}</small></p>
+
+{% if survey.archived %}
+    <p style="color:red;"><strong>Archived</strong></p>
+{% endif %}
+
+<!-- Owner actions -->
+<form method="GET" action="{{ url_for('edit_survey', survey_id=survey.id) }}" style="display:inline;">
+    <button type="submit">Edit Survey</button>
+</form>
+
+<form method="POST" action="{{ url_for('archive_survey', survey_id=survey.id) }}" style="display:inline;">
+    {% if survey.archived %}
+        <button formaction="{{ url_for('unarchive_survey', survey_id=survey.id) }}" type="submit">Unarchive</button>
+    {% else %}
+        <button type="submit">Archive</button>
+    {% endif %}
+</form>
+
+<form method="POST" action="{{ url_for('delete_survey_route', survey_id=survey.id) }}" 
+      style="display:inline;" onsubmit="return confirm('Delete this survey and ALL its responses? This cannot be undone.');">
+    <button type="submit">Delete Survey</button>
+</form>
+
+<!-- View actual responses list -->
+<a href="{{ url_for('survey_responses_list', survey_id=survey.id) }}">
+    <button type="button">View Responses</button>
+</a>
+
+<a href="{{ url_for('view_all_responses') }}">Back to all surveys</a>
+{% endblock %}
