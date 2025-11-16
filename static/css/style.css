@@ -1,4 +1,4 @@
-/* Reset and base styles */
+/* GLOBAL RESET & BASE */
 body {
   font-family: 'Segoe UI', Tahoma, sans-serif;
   background: #f8f9fb;
@@ -7,8 +7,16 @@ body {
   padding-top: 80px; /* space for fixed navbar */
 }
 
-/* Navbar */
-nav {
+/* HEADER + NAVIGATION */
+.site-header {
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar {
   width: 100%;
   background-color: #2c3e50;
   color: white;
@@ -19,38 +27,36 @@ nav {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 100;
   box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
 
-nav h1 {
+.navbar h1 {
   margin: 0;
   font-size: 1.2em;
 }
 
-nav ul {
-  list-style: none;
-  display: flex;
-  gap: 15px;
-  margin: 0;
-  padding: 0;
-}
-
-nav ul li a {
-  color: #fff;
+.nav-left a,
+.navbar a {
+  color: white;
   text-decoration: none;
-  padding: 5px 10px;
-  transition: background 0.2s;
-  margin-left: 10px; /* was 15px */
-
+  margin-left: 10px;
 }
 
-nav ul li a:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
+.nav-left a:hover {
+  text-decoration: underline;
 }
 
-/* Container for main content */
+.nav-right span {
+  font-weight: 500;
+  margin-right: 10px;
+}
+
+/* MAIN CONTENT */
+.main-content {
+  padding: 20px;
+}
+
+/* CONTAINER LAYOUT */
 .container {
   max-width: 700px;
   width: 90%;
@@ -61,14 +67,14 @@ nav ul li a:hover {
   margin: 0 auto 40px auto;
 }
 
-/* Survey list */
-.container ul#surveyList {
+/* SURVEY LIST */
+#surveyList {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.container ul#surveyList li {
+#surveyList li {
   background: #f0f3f6;
   margin: 10px 0;
   padding: 15px;
@@ -76,11 +82,11 @@ nav ul li a:hover {
   transition: background 0.2s ease;
 }
 
-.container ul#surveyList li:hover {
+#surveyList li:hover {
   background: #e4e9f0;
 }
 
-.container ul#surveyList button.link-like {
+#surveyList button.link-like {
   background: none;
   border: none;
   color: #2a75ff;
@@ -89,14 +95,14 @@ nav ul li a:hover {
   text-decoration: underline;
 }
 
-/* Titles */
+/* TITLES */
 h1, h2 {
   text-align: center;
   color: #2d3e50;
   margin-bottom: 20px;
 }
 
-/* Buttons */
+/* BUTTONS */
 button, .btn {
   display: inline-block;
   padding: 10px 20px;
@@ -120,24 +126,19 @@ button:hover, .btn:hover {
   background: #27ae60;
 }
 
-.removeBtn {
-  background: #e74c3c;
-  color: white;
-  border: none;
-  padding: 5px 8px;
-  border-radius: 4px;
-  cursor: pointer;
-}
+.removeBtn,
 .remove-question-btn {
   background: #e74c3c;
-  font-size: 12px;
   color: white;
   border: none;
   padding: 5px 8px;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 12px;
   margin-top: 10px;
 }
+
+/* QUESTION BLOCKS */
 .question {
   margin-top: 20px;
   padding: 15px;
@@ -155,7 +156,7 @@ button:hover, .btn:hover {
   padding-left: 10px;
 }
 
-
+/* QUESTION ITEMS */
 .question-item {
   display: flex;
   align-items: center;
@@ -168,10 +169,9 @@ button:hover, .btn:hover {
   margin-right: 5px;
 }
 
-/* Inputs, selects, textareas */
+/* INPUTS */
 input, textarea, select {
   display: block;
-  
   margin-bottom: 10px;
   padding: 8px;
   border: 1px solid #ccc;
@@ -182,19 +182,29 @@ input, textarea, select {
 input[type="text"] {
   width: 95%;
 }
+input[type="radio"],
+input[type="checkbox"] {
+    vertical-align: middle;  /* Align with text */
+    margin-right: 6px;       /* space between button and label text */
+}
 
-/* Options (checkbox/radio) */
+/* OPTIONS */
 .option {
   margin-left: 15px;
   margin-bottom: 5px;
 }
 
-/* Hidden section toggle (survey details) */
+/* ANIMATION */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 #surveyDetails {
   animation: fadeIn 0.3s ease;
 }
 
-/* Back button */
+/* BACK BUTTON */
 #backBtn {
   background: #aaa;
   color: white;
@@ -202,14 +212,4 @@ input[type="text"] {
 
 #backBtn:hover {
   background: #888;
-}
-
-/* Animation */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-nav a{
-  color: white;
-  text-decoration: none;
 }

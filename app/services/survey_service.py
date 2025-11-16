@@ -41,46 +41,62 @@ class SurveyService:
             "has_prev": start > 0
         }
     
-    def update_survey(self, survey_id, form):
+    def update_survey(self, survey_id, data):
         survey = self.survey_repo.get_by_id(survey_id)
         if not survey:
             raise LookupError("Survey not found")
-        title = form.get("title")
-        description = form.get("description")
-        if title is not None:
-            survey["title"] = title.strip()
-        if description is not None:
-            survey["description"] = description.strip()
 
-        for q in survey["questions"]:
-            qid = str(q["id"])
-            t = form.get(f"text_{qid}")
-            if t is not None:
-                q["text"] = t.strip()
-                q["updated_at"] = datetime.now(timezone.utc).isoformat()
-            req = form.get(f"required_{qid}")
-            q["required"] = (req == "on")
-            del_flag = form.get(f"delete_{qid}")
-            q["deleted"] = (del_flag == "on")
-            opt_raw = form.get(f"options_{qid}")
-            if opt_raw is not None and q["type"] in ("multiple", "checkbox"):
-                opt_list = [o.strip() for o in opt_raw.split(",") if o.strip()]
-                q["options"] = opt_list
-                q["updated_at"] = datetime.now(timezone.utc).isoformat()
-        new_q_texts = form.getlist("new_text")
-        new_q_types = form.getlist("new_type")
-        new_q_options = form.getlist("new_options")
-        for text, qtype, ops in zip(new_q_texts, new_q_types, new_q_options):
-            if text.strip() == "":
-                continue
-            new_q_data = {
-                "text": text,
-                "type": qtype,
-                "options": ops,
-                "required": False,
-            }
-            full = map_question(new_q_data, survey["questions"])
-            survey["questions"].append(full)
+        # Validate title & description
+        title = data.get("title", "").strip()
+        description = data.get("description", "").strip()
+        if not title:
+            raise ValueError("Title cannot be empty")
+        if not description:
+            raise ValueError("Description cannot be empty")
+
+        survey["title"] = title
+        survey["description"] = description
+
+        # Questions handling
+        questions_data = data.get("questions", [])
+        if not questions_data:
+            raise ValueError("Survey must have at least one question")
+
+        updated_questions = []
+        for q in questions_data:
+            q_id = q.get("id")
+            q_text = q.get("text", "").strip()
+            q_type = q.get("type", "text")
+            q_options = q.get("options", [])
+            q_required = bool(q.get("required", False))
+            q_deleted = bool(q.get("deleted", False))
+
+            # Validation
+            if not q_text:
+                raise ValueError(f"Question text cannot be empty (id={q_id})")
+            if q_type in ("multiple", "checkbox") and len(q_options) < 2:
+                raise ValueError(f"Question id={q_id} must have at least 2 options")
+
+            # Keep existing created_at or id
+            existing_q = next((ex for ex in survey.get("questions", []) if ex["id"] == q_id), None)
+            if existing_q:
+                created_at = existing_q.get("created_at")
+            else:
+                created_at = datetime.now(timezone.utc).isoformat()
+                q_id = max((q["id"] for q in survey.get("questions", [])), default=0) + 1
+
+            updated_questions.append({
+                "id": q_id,
+                "text": q_text,
+                "type": q_type,
+                "options": q_options,
+                "deleted": q_deleted,
+                "required": q_required,
+                "created_at": created_at,
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            })
+
+        survey["questions"] = updated_questions
         survey["updated_at"] = datetime.now(timezone.utc).isoformat()
         self.survey_repo.update(survey_id, survey)
         return survey

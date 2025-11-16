@@ -1,33 +1,43 @@
 {% extends "base.html" %}
-
 {% block content %}
-<h2>All Surveys</h2>
 
-<ul>
+<h2 class="page-title">All Surveys</h2>
+
+<div class="survey-grid">
     {% for s in surveys %}
-        <li>
-            <a href="{{ url_for('survey.view_survey_detail', survey_id=s.id) }}">
-                {{ s.title }}
-            </a>
-            <span style="color:#777; font-size: 0.9em;">
-                {% if s.creator %}
-                (created by {{ s.creator }})
-                {% endif %}
-            </span>
-        </li>
-    {% endfor %}
-</ul>
+    <div class="survey-card">
+        <div class="survey-card-header">
+            <h3 class="survey-title">
+                <a href="{{ url_for('survey.view_survey_detail', survey_id=s.id) }}">
+                    {{ s.title }}
+                </a>
+            </h3>
+            {% if s.status %}
+                <span class="survey-status {{ s.status }}">{{ s.status|capitalize }}</span>
+            {% endif %}
+        </div>
 
-<!-- Pagination Controls -->
-<div style="margin-top: 20px; text-align:center;">
+        <p class="survey-meta">
+            {% if s.creator %}
+                Created by <strong>{{ s.creator }}</strong>
+            {% endif %}
+            {% if s.created_at %}
+                · {{ s.created_at }}
+            {% endif %}
+        </p>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="pagination">
     {% if has_prev %}
-        <a href="{{ url_for('survey.view_surveys', page=page-1) }}">⬅ Previous</a>
+        <a class="page-btn" href="{{ url_for('survey.view_surveys', page=page-1) }}">⬅ Previous</a>
     {% endif %}
 
-    <span style="margin: 0 15px;">Page {{ page }}</span>
+    <span class="page-number">Page {{ page }}</span>
 
     {% if has_next %}
-        <a href="{{ url_for('survey.view_surveys', page=page+1) }}">Next ➡</a>
+        <a class="page-btn" href="{{ url_for('survey.view_surveys', page=page+1) }}">Next ➡</a>
     {% endif %}
 </div>
 

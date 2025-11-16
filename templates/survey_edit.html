@@ -1,73 +1,31 @@
 {% extends "base.html" %}
+
 {% block content %}
+<div class="container">
+    <h2>Edit Survey</h2>
 
-<h2>Edit Survey</h2>
+    <form id="editSurveyForm">
+        <!-- Survey Info -->
+        <label for="title">Survey Title:</label>
+        <input type="text" id="title" name="title" value="{{ survey.title }}" required>
 
-<form method="POST">
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" required rows="4">{{ survey.description }}</textarea>
 
-    <!-- Title -->
-    <label>Title</label>
-    <input type="text" name="title" value="{{ survey.title }}" style="width:100%" required>
+        <!-- Questions container -->
+        <div id="questions"></div>
 
-    <!-- Description -->
-    <label>Description</label>
-    <textarea name="description" style="width:100%" rows="3">{{ survey.description }}</textarea>
+        <button type="button" class="btn primary" id="addQuestionBtn">Add Question</button>
 
-    <h3>Questions</h3>
+        <div style="margin-top:20px;">
+            <button type="button" class="btn primary" id="submitSurveyBtn">Save Changes</button>
+        </div>
+    </form>
+</div>
 
-    {% for q in survey.questions if not q.deleted %}
-    <div style="border:1px solid #ddd; padding:10px; margin:10px 0">
-
-        <strong>Question {{ loop.index }} ({{ q.type }})</strong><br>
-
-        <!-- text -->
-        <input type="text" name="text_{{ q.id }}" value="{{ q.text }}" style="width:100%">
-
-        <!-- required -->
-        <label>
-            <input type="checkbox" name="required_{{ q.id }}" {% if q.required %}checked{% endif %}>
-            Required
-        </label>
-        <br>
-
-        <!-- options -->
-        {% if q.type != 'text' %}
-        <label>Options (comma separated)</label>
-        <input type="text" name="options_{{ q.id }}" 
-               value="{{ q.options | join(', ') }}" style="width:100%">
-        {% endif %}
-
-        <label>
-            <input type="checkbox" name="delete_{{ q.id }}">
-            Delete this question
-        </label>
-
-    </div>
-    {% endfor %}
-
-    <h3>Add New Questions</h3>
-
-    {% for i in range(3) %}
-    <div style="border:1px dashed #aaa; padding:10px; margin-bottom:8px">
-
-        <input type="text" name="new_text" placeholder="Question text" style="width:100%">
-
-        <select name="new_type">
-            <option value="text">Text</option>
-            <option value="multiple">Multiple choice</option>
-            <option value="checkbox">Checkbox</option>
-        </select>
-
-        <input type="text" name="new_options"
-               placeholder="opt1, opt2, opt3 (only for MCQ)"
-               style="width:100%">
-
-    </div>
-    {% endfor %}
-
-    <button type="submit">Save</button>
-    <a href="{{ url_for('survey_control.survey_control_page', survey_id=survey.id) }}">Cancel</a>
-
-</form>
-
+<!-- Pass survey data to JS -->
+<script>
+const surveyData = JSON.parse('{{ survey | tojson | safe }}');
+</script>
+<script src="{{ url_for('static', filename='js/survey_edit.js') }}"></script>
 {% endblock %}

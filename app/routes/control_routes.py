@@ -59,7 +59,8 @@ def edit_survey(survey_id):
         return render_template("survey_edit.html", survey=survey)
 
     # POST — apply update
-    survey_service.update_survey(survey_id, request.form)
+    survey_service.update_survey(survey_id, request.json)
+    #survey_service.survey_repo.update(survey_id, request.json)
     flash("Survey updated successfully.")
     return redirect(url_for("survey_control.survey_control_page", survey_id=survey_id))
 

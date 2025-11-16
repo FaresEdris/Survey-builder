@@ -1,0 +1,79 @@
+.page-title {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.survey-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+.survey-card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 16px;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.survey-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.survey-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.survey-title a {
+    text-decoration: none;
+    color: #333;
+}
+
+.survey-title a:hover {
+    text-decoration: underline;
+}
+
+.survey-status {
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 0.8em;
+    text-transform: capitalize;
+}
+
+/* status color code */
+.survey-status.published { background: #d1f5d3; color: #1a8c2f; }
+.survey-status.draft     { background: #ffe9b3; color: #8c6a00; }
+
+.survey-meta {
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.pagination {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.page-btn {
+    padding: 6px 12px;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    text-decoration: none;
+    margin: 0 10px;
+    color: #333;
+}
+
+.page-btn:hover {
+    background: #eee;
+}
+
+.page-number {
+    margin: 0 12px;
+    font-weight: bold;
+}

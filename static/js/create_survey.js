@@ -1,96 +1,90 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const questionsDiv = document.getElementById("questions");
-  const addQuestionBtn = document.getElementById("addQuestionBtn");
-  const submitSurveyBtn = document.getElementById("submitSurveyBtn");
+const questionTypes = ['text', 'multiple', 'checkbox'];
+let questionCounter = 0;
+const questionsContainer = document.getElementById('questions');
 
-  let questionCount = 0;
+document.getElementById('addQuestionBtn').addEventListener('click', () => {
+    questionCounter++;
+    const questionCard = document.createElement('div');
+    questionCard.className = 'question';
+    questionCard.dataset.index = questionCounter;
 
+    questionCard.innerHTML = `
+        <h4>Question ${questionCounter}</h4>
+        <label>Text:</label>
+        <input type="text" class="question-text" required>
 
+        <label>Type:</label>
+        <select class="question-type">
+            ${questionTypes.map(t => `<option value="${t}">${t}</option>`).join('')}
+        </select>
 
-  // Add question
-  addQuestionBtn.addEventListener("click", () => {
-    const qDiv = document.createElement("div");
-    qDiv.className = "question";
+        <div class="question-options-container" style="display:none;">
+            <label>Options (comma separated):</label>
+            <input type="text" class="question-options">
+        </div>
 
-    const qIndex = questionCount++;
-    qDiv.innerHTML = `
-      <h4>Question ${qIndex + 1}</h4>
-      <input type="text" class="q-text" placeholder="Enter question text" required>
+        <label>
+            <input type="checkbox" class="question-required"> Required
+        </label>
 
-      <label>Type:</label>
-      <select class="q-type">
-        <option value="text">Text</option>
-        <option value="multiple">Multiple Choice</option>
-      </select>
-
-      <div class="options" style="display:none;">
-        <p>Options (comma-separated):</p>
-        <input type="text" class="q-options" placeholder="Option1, Option2, Option3">
-      </div>
-      <button type="button" class="remove-question-btn">Remove Question</button>
-      <hr>
+        <button type="button" class="remove-question-btn">Remove</button>
+        <hr>
     `;
 
-    const typeSelect = qDiv.querySelector(".q-type");
-    const optionsDiv = qDiv.querySelector(".options");
-    typeSelect.addEventListener("change", () => {
-      optionsDiv.style.display = typeSelect.value === "multiple" ? "block" : "none";
-    });
-    qDiv.querySelector(".remove-question-btn").addEventListener("click", () => {
-      questionsDiv.removeChild(qDiv);
+    questionsContainer.appendChild(questionCard);
+
+    const typeSelect = questionCard.querySelector('.question-type');
+    const optionsDiv = questionCard.querySelector('.question-options-container');
+    typeSelect.addEventListener('change', () => {
+        if (typeSelect.value === 'text') {
+            optionsDiv.style.display = 'none';
+        } else {
+            optionsDiv.style.display = 'block';
+        }
     });
 
-    questionsDiv.appendChild(qDiv);
-  });
+    questionCard.querySelector('.remove-question-btn').addEventListener('click', () => {
+        questionsContainer.removeChild(questionCard);
+    });
+});
 
-  // Submit survey
-  submitSurveyBtn.addEventListener("click", async () => {
-    const title = document.getElementById("title").value.trim();
-    const description = document.getElementById("description").value.trim();
+// Submit survey
+document.getElementById('submitSurveyBtn').addEventListener('click', async () => {
+    const title = document.getElementById('title').value.trim();
+    const description = document.getElementById('description').value.trim();
 
     if (!title || !description) {
-      alert("Title and description are required.");
-      return;
-    } 
-    const questionElements = document.querySelectorAll(".question");
-    const questions = Array.from(questionElements).map(q => {
-      const text = q.querySelector(".q-text").value.trim();
-      const type = q.querySelector(".q-type").value;
-      const optionsField = q.querySelector(".q-options");
-      const options =
-        optionsField && type === "multiple"
-          ? optionsField.value.split(",").map(o => o.trim()).filter(o => o)
-          : [];
+        alert('Title and description are required.');
+        return;
+    }
 
-      if (!text) {
-        alert("Question text cannot be empty.");
-        throw new Error("Empty question text");
-      }
+    const questions = Array.from(document.querySelectorAll('.question')).map(q => {
+        const text = q.querySelector('.question-text').value.trim();
+        const type = q.querySelector('.question-type').value;
+        const required = q.querySelector('.question-required').checked;
+        const optionsInput = q.querySelector('.question-options');
+        const options = optionsInput ? optionsInput.value.split(',').map(o => o.trim()).filter(o => o) : [];
 
-      if (type === "multiple" && options.length < 2) {
-        alert("Multiple choice questions must have at least two options.");
-        throw new Error("Not enough options");
-      }
-
-      return { text, type, options };
+        return { text, type, required, options };
     });
 
-    const newSurvey = { title, description, questions };
+    if (questions.length === 0) {
+        alert('Add at least one question.');
+        return;
+    }
 
     try {
-      const response = await fetch("/api/surveys", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newSurvey)
-      });
-
-      if (!response.ok) throw new Error("Failed to create survey");
-
-      alert("Survey created successfully!");
-      window.location.href = "/surveys/view";
+        const res = await fetch('/api/surveys', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, description, questions })
+        });
+        if (!res.ok) throw new Error('Failed to create survey.');
+        alert('Survey created successfully!');
+        window.location.href = '/surveys/view';
     } catch (err) {
-      console.error(err);
-      alert("Error creating survey.");
+        console.error(err);
+        alert('Error creating survey.');
     }
-  });
 });
+
