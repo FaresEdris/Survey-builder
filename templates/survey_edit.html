@@ -1,66 +1,73 @@
 {% extends "base.html" %}
 {% block content %}
+
 <h2>Edit Survey</h2>
 
-<form method="POST" action="{{ url_for('survey_control.edit_survey', survey_id=survey.id) }}">
-    <label>Title</label><br>
-    <input type="text" name="title" value="{{ survey.title }}" required style="width:100%;"><br><br>
+<form method="POST">
 
-    <label>Description</label><br>
-    <textarea name="description" rows="3" style="width:100%;">{{ survey.description }}</textarea><br><br>
+    <!-- Title -->
+    <label>Title</label>
+    <input type="text" name="title" value="{{ survey.title }}" style="width:100%" required>
 
+    <!-- Description -->
+    <label>Description</label>
+    <textarea name="description" style="width:100%" rows="3">{{ survey.description }}</textarea>
 
-<h3>Existing Questions</h3>
-{% for q in survey.questions %}
-  <div style="border:1px solid #ddd; padding:10px; margin-bottom:8px;">
-      <!-- keep an array of ids for iteration/backwards compat -->
-      <input type="hidden" name="question_id" value="{{ q.id }}">
+    <h3>Questions</h3>
 
-      <label>Question {{ loop.index }} (type: {{ q.type }})</label><br>
+    {% for q in survey.questions if not q.deleted %}
+    <div style="border:1px solid #ddd; padding:10px; margin:10px 0">
 
-      <!-- explicit per-id field names -->
-      <input type="text" name="question_text_{{ q.id }}" value="{{ q.text }}" style="width:100%;"><br>
+        <strong>Question {{ loop.index }} ({{ q.type }})</strong><br>
 
-      <input type="hidden" name="question_type_{{ q.id }}" value="{{ q.type }}">
+        <!-- text -->
+        <input type="text" name="text_{{ q.id }}" value="{{ q.text }}" style="width:100%">
 
-      {% if q.type == 'multiple' %}
-        <label>Options (comma separated)</label><br>
-        <input type="text"
-               name="question_options_{{ q.id }}"
-               value="{{ q.options | join(', ') }}"
-               style="width:100%;"><br>
-      {% else %}
-        <!-- keep a hidden field so server-side fallback still sees something -->
-        <input type="hidden" name="question_options_{{ q.id }}" value="">
-      {% endif %}
+        <!-- required -->
+        <label>
+            <input type="checkbox" name="required_{{ q.id }}" {% if q.required %}checked{% endif %}>
+            Required
+        </label>
+        <br>
 
-      <label>
-        <input type="checkbox" name="question_delete_{{ q.id }}" value="1"
-               {% if q.deleted %}checked{% endif %}>
-        Mark question as deleted
-      </label>
-  </div>
-{% endfor %}
+        <!-- options -->
+        {% if q.type != 'text' %}
+        <label>Options (comma separated)</label>
+        <input type="text" name="options_{{ q.id }}" 
+               value="{{ q.options | join(', ') }}" style="width:100%">
+        {% endif %}
 
+        <label>
+            <input type="checkbox" name="delete_{{ q.id }}">
+            Delete this question
+        </label>
 
-
-    <h3>Add New Questions</h3>
-    <!-- Provide three empty slots for new questions -->
-    {% for i in range(3) %}
-    <div style="border:1px dashed #ccc; padding:10px; margin-bottom:8px;">
-        <label>New Question {{ i+1 }}</label><br>
-        <input type="text" name="new_question_text" placeholder="Question text" style="width:100%;"><br>
-        <label>Type</label>
-        <select name="new_question_type">
-            <option value="text">Text</option>
-            <option value="multiple">Multiple choice</option>
-        </select><br>
-        <label>Options (comma separated, for multiple choice)</label><br>
-        <input type="text" name="new_question_options" placeholder="opt1, opt2, opt3" style="width:100%;"><br>
     </div>
     {% endfor %}
 
-    <button type="submit">Save changes</button>
+    <h3>Add New Questions</h3>
+
+    {% for i in range(3) %}
+    <div style="border:1px dashed #aaa; padding:10px; margin-bottom:8px">
+
+        <input type="text" name="new_text" placeholder="Question text" style="width:100%">
+
+        <select name="new_type">
+            <option value="text">Text</option>
+            <option value="multiple">Multiple choice</option>
+            <option value="checkbox">Checkbox</option>
+        </select>
+
+        <input type="text" name="new_options"
+               placeholder="opt1, opt2, opt3 (only for MCQ)"
+               style="width:100%">
+
+    </div>
+    {% endfor %}
+
+    <button type="submit">Save</button>
     <a href="{{ url_for('survey_control.survey_control_page', survey_id=survey.id) }}">Cancel</a>
+
 </form>
+
 {% endblock %}

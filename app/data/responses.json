@@ -17,5 +17,53 @@
                 "answer": "no"
             }
         ]
+    },
+    {
+        "id": 2,
+        "survey_id": 4,
+        "respondent": "anonymous",
+        "answers": [
+            {
+                "question_id": 1,
+                "answer": "new"
+            },
+            {
+                "question_id": 2,
+                "answer": "op2"
+            }
+        ],
+        "submitted_at": "2025-11-16T13:06:53.969680+00:00"
+    },
+    {
+        "id": 3,
+        "survey_id": 6,
+        "respondent": "anonymous",
+        "answers": [
+            {
+                "question_id": 1,
+                "answer": "answer"
+            },
+            {
+                "question_id": 2,
+                "answer": "o1"
+            }
+        ],
+        "submitted_at": "2025-11-16T14:01:09.416522+00:00"
+    },
+    {
+        "id": 4,
+        "survey_id": 3,
+        "respondent": "anonymous",
+        "answers": [
+            {
+                "question_id": 1,
+                "answer": "yes"
+            },
+            {
+                "question_id": 2,
+                "answer": "yes"
+            }
+        ],
+        "submitted_at": "2025-11-16T14:06:15.319945+00:00"
     }
 ]

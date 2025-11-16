@@ -2,6 +2,7 @@ from app.repository.json_repository import Repository
 from app.mappers.response import map_response
 from app.mappers.survey import map_survey
 
+
 class ResponseService:
     def __init__(self):
         self.response_repo = Repository("responses", map_response)
@@ -29,17 +30,27 @@ class ResponseService:
 
     def submit(self, survey_id, respondent, answers):
         survey = self.survey_repo.get_by_id(survey_id)
+
         valid_ids = {q["id"] for q in survey["questions"]}
 
+        clean_answers = []
         for ans in answers:
-            if ans["question_id"] not in valid_ids:
-                raise ValueError("Invalid question ID")
+            qid = int(ans.get("question_id", -1))
+            if qid not in valid_ids:
+                raise ValueError(f"Invalid question ID: {qid}")
+            answer_val = ans.get("answer", "")
+            clean_answers.append({
+                "question_id": qid,
+                "answer": str(answer_val)
+            })
 
-        return self.response_repo.add({
+        response_data = {
             "survey_id": survey_id,
-            "respondent": respondent,
-            "answers": answers
-        })
+            "respondent": respondent or "anonymous",
+            "answers": clean_answers,
+        }
+
+        return self.response_repo.add(response_data)
 
     def get_survey_with_responses(self, survey_id, respondent=None):
         survey = self.survey_repo.get_by_id(survey_id)

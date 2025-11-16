@@ -18,5 +18,10 @@
         "id": 4,
         "username": "Faresedris",
         "password": "scrypt:32768:8:1$qcydgxk575yczpom$e7beb265830a543aa80c802050f0dbc722add2eba4e722cea1e9e180185c6484a4b578bb2361a2d1ddcb752741b7f30820670d092fc58fdd72dd08dd4687752c"
+    },
+    {
+        "id": 5,
+        "username": "new",
+        "password": "scrypt:32768:8:1$6sHBJlOARfz4Dyv2$dc4334dff1febf33c90a90701dd5af1189179d9f6678fe57193b4274417cd0c989de70fe279ea1dd661d7047194a4f7f4a975b0e491d617a09b18f6f9914a5a5"
     }
 ]

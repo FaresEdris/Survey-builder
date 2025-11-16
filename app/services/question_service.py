@@ -1,5 +1,6 @@
 from app.repository.json_repository import Repository
 from app.mappers.survey import  map_survey
+from app.mappers.question import map_question
 from datetime import datetime, timezone
 
 class QuestionService:
@@ -17,21 +18,16 @@ class QuestionService:
                 return q
         raise LookupError(f"Question {q_id} not found.")
 
-    def add(self, survey_id, q_data):
-        surveys = self.survey_repo.get_items()
-        for survey in surveys:
-            if survey["id"] == survey_id:
-                q = {
-                    "text": q_data["text"],
-                    "type": q_data.get("type", "text"),
-                    "options": q_data.get("options", []),
-                    "deleted": False
-                }
-                survey["questions"].append(q)
-                survey["updated_at"] = datetime.now(timezone.utc).isoformat()
-                self.survey_repo.save_db(surveys)
-                return q
-        raise LookupError("Survey not found.")
+    def add(self,survey_id, question):
+        survey= self.survey_repo.get_by_id(survey_id)
+        if survey is None:
+            raise LookupError("Survey not found.")
+        questions = survey.get("questions", [])
+        new_question = map_question(question, questions)
+        questions.append(new_question)
+        self.survey_repo.update(survey_id, {"questions": questions})
+        return True
+
 
     def delete(self, survey_id, q_id):
         surveys = self.survey_repo.get_items()

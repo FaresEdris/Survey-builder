@@ -53,24 +53,16 @@ def survey_responses_list(survey_id):
 @survey_control_bp.route("/surveys/<int:survey_id>/edit", methods=["GET", "POST"])
 @login_required
 def edit_survey(survey_id):
-    survey = survey_service.get_survey(survey_id)
-    if not survey:
-        return "Survey not found", 404
-    if survey.get("creator") != current_user.username:
-        abort(403)
 
     if request.method == "GET":
+        survey = survey_service.get_survey(survey_id)
         return render_template("survey_edit.html", survey=survey)
 
-    try:
-        updates = request.form.to_dict(flat=False)  
-        survey_service.update_survey_from_form(survey_id, updates)
-        flash("Survey updated successfully.")
-    except Exception as e:
-        flash(f"Failed to update survey: {e}")
-        return redirect(url_for("survey_control.edit_survey", survey_id=survey_id))
-
+    # POST — apply update
+    survey_service.update_survey(survey_id, request.form)
+    flash("Survey updated successfully.")
     return redirect(url_for("survey_control.survey_control_page", survey_id=survey_id))
+
 
 # ----------------------------------------
 # Delete survey

@@ -2,10 +2,12 @@ from flask import Blueprint, render_template, request, jsonify
 from flask_login import login_required, current_user
 from app.services.survey_service import SurveyService
 from app.services.response_service import ResponseService
+from app.services.question_service import QuestionService
 
 # Initialize services
 survey_service = SurveyService()
 response_service = ResponseService()
+question_service = QuestionService()
 
 survey_bp = Blueprint("survey", __name__)
 
@@ -62,7 +64,7 @@ def create_survey():
     new_survey = survey_service.add_survey(survey_data)
 
     for q in questions:
-        survey_service.add_question(new_survey["id"], q)
+        question_service.add(new_survey["id"], q)
 
     return jsonify({"message": "Survey created successfully", "survey": new_survey}), 201
 
@@ -71,5 +73,5 @@ def api_submit_response(survey_id):
     data = request.json
     respondent = data.get("respondent", "anonymous")
     answers = data.get("answers", [])
-    response = response_service.submit_response(survey_id, respondent, answers)
+    response = response_service.submit(survey_id, respondent, answers)
     return jsonify(response), 201
