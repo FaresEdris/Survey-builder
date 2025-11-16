@@ -6,7 +6,7 @@
 <ul>
     {% for s in surveys %}
         <li>
-            <a href="{{ url_for('view_survey_detail', survey_id=s.id) }}">
+            <a href="{{ url_for('survey.view_survey_detail', survey_id=s.id) }}">
                 {{ s.title }}
             </a>
             <span style="color:#777; font-size: 0.9em;">
@@ -21,13 +21,13 @@
 <!-- Pagination Controls -->
 <div style="margin-top: 20px; text-align:center;">
     {% if has_prev %}
-        <a href="{{ url_for('view_surveys', page=page-1) }}">⬅ Previous</a>
+        <a href="{{ url_for('survey.view_surveys', page=page-1) }}">⬅ Previous</a>
     {% endif %}
 
     <span style="margin: 0 15px;">Page {{ page }}</span>
 
     {% if has_next %}
-        <a href="{{ url_for('view_surveys', page=page+1) }}">Next ➡</a>
+        <a href="{{ url_for('survey.view_surveys', page=page+1) }}">Next ➡</a>
     {% endif %}
 </div>
 

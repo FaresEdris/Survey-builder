@@ -9,11 +9,11 @@
 
 {% if current_user.is_authenticated and survey.creator == current_user.username %}
     {% if survey.archived %}
-        <form method="POST" action="{{ url_for('unarchive_survey', survey_id=survey.id) }}">
+        <form method="POST" action="{{ url_for('survey_control.unarchive_survey', survey_id=survey.id) }}">
             <button type="submit">Unarchive</button>
         </form>
     {% else %}
-        <form method="POST" action="{{ url_for('archive_survey', survey_id=survey.id) }}">
+        <form method="POST" action="{{ url_for('survey_control.archive_survey', survey_id=survey.id) }}">
             <button type="submit">Archive</button>
         </form>
     {% endif %}
@@ -39,6 +39,6 @@
     <p>No responses yet.</p>
 {% endif %}
 
-<a href="{{ url_for('view_all_responses') }}">Back to all surveys</a>
+<a href="{{ url_for('survey_control.view_all_responses') }}">Back to all surveys</a>
 
 {% endblock %}

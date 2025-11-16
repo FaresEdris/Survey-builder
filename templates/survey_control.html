@@ -11,27 +11,27 @@
 {% endif %}
 
 <!-- Owner actions -->
-<form method="GET" action="{{ url_for('edit_survey', survey_id=survey.id) }}" style="display:inline;">
+<form method="GET" action="{{ url_for('survey_control.edit_survey', survey_id=survey.id) }}" style="display:inline;">
     <button type="submit">Edit Survey</button>
 </form>
 
-<form method="POST" action="{{ url_for('archive_survey', survey_id=survey.id) }}" style="display:inline;">
+<form method="POST" action="{{ url_for('survey_control.archive_survey', survey_id=survey.id) }}" style="display:inline;">
     {% if survey.archived %}
-        <button formaction="{{ url_for('unarchive_survey', survey_id=survey.id) }}" type="submit">Unarchive</button>
+        <button formaction="{{ url_for('survey_control.unarchive_survey', survey_id=survey.id) }}" type="submit">Unarchive</button>
     {% else %}
         <button type="submit">Archive</button>
     {% endif %}
 </form>
 
-<form method="POST" action="{{ url_for('delete_survey_route', survey_id=survey.id) }}" 
+<form method="POST" action="{{ url_for('survey_control.delete_survey_route', survey_id=survey.id) }}" 
       style="display:inline;" onsubmit="return confirm('Delete this survey and ALL its responses? This cannot be undone.');">
     <button type="submit">Delete Survey</button>
 </form>
 
 <!-- View actual responses list -->
-<a href="{{ url_for('survey_responses_list', survey_id=survey.id) }}">
+<a href="{{ url_for('survey_control.survey_responses_list', survey_id=survey.id) }}">
     <button type="button">View Responses</button>
 </a>
 
-<a href="{{ url_for('view_all_responses') }}">Back to all surveys</a>
+<a href="{{ url_for('survey_control.view_all_responses') }}">Back to all surveys</a>
 {% endblock %}

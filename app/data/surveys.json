@@ -1,7 +1,7 @@
 [
     {
         "id": 1,
-        "title": "Updated Survey3",
+        "title": "Updated Survey Title",
         "description": "Updated description3",
         "questions": [
             {
@@ -41,5 +41,15 @@
         "archived": false,
         "created_at": "2025-11-15T14:21:08.071768",
         "updated_at": "2025-11-15T18:13:13.884230+00:00"
+    },
+    {
+        "id": 2,
+        "title": "Updated Survey Title",
+        "description": "Updated description",
+        "questions": [],
+        "creator": "admin",
+        "archived": false,
+        "created_at": "2025-11-16T10:01:33.022995+00:00",
+        "updated_at": "2025-11-16T10:03:18.685914+00:00"
     }
 ]

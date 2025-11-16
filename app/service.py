@@ -1,4 +1,4 @@
-from repository import Repository
+from repo import Repository
 from mapper import survey_mapper,response_mapper,get_max_id
 from datetime import datetime, timezone
 
