@@ -17,6 +17,5 @@ class UserRepository(Repository):
         return User(item["id"], item["username"], item["password"])
 
     def add_user(self, username, password):
-        # Uses mapper + repository logic
         user_dict = self.add({"username": username, "password": password})
         return User(user_dict["id"], user_dict["username"], user_dict["password"])

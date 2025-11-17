@@ -20,7 +20,7 @@ class SurveyService:
     
     def delete_survey(self, survey_id):
         return self.survey_repo.delete(survey_id)
-    
+    #not in use currently
     def update_metadata(self, survey_id, updates):
         updates["updated_at"] = datetime.now(timezone.utc).isoformat()
         return self.survey_repo.update(survey_id, updates)
@@ -46,22 +46,18 @@ class SurveyService:
         if not survey:
             raise LookupError("Survey not found")
 
-        # Validate title & description
         title = data.get("title", "").strip()
         description = data.get("description", "").strip()
         if not title:
             raise ValueError("Title cannot be empty")
         if not description:
             raise ValueError("Description cannot be empty")
-
         survey["title"] = title
         survey["description"] = description
 
-        # Questions handling
         questions_data = data.get("questions", [])
         if not questions_data:
             raise ValueError("Survey must have at least one question")
-
         updated_questions = []
         for q in questions_data:
             q_id = q.get("id")
@@ -71,13 +67,11 @@ class SurveyService:
             q_required = bool(q.get("required", False))
             q_deleted = bool(q.get("deleted", False))
 
-            # Validation
             if not q_text:
                 raise ValueError(f"Question text cannot be empty (id={q_id})")
             if q_type in ("multiple", "checkbox") and len(q_options) < 2:
                 raise ValueError(f"Question id={q_id} must have at least 2 options")
 
-            # Keep existing created_at or id
             existing_q = next((ex for ex in survey.get("questions", []) if ex["id"] == q_id), None)
             if existing_q:
                 created_at = existing_q.get("created_at")

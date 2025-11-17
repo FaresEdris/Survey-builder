@@ -9,12 +9,12 @@ def map_question(item, existing_questions):
     
     options = []
     if q_type in ("multiple", "checkbox"):
-        raw_options = item.get("options", [])
-        if isinstance(raw_options, str):
+        options = item.get("options", [])
+        if isinstance(options, str):
             # comma-separated string
-            options = [o.strip() for o in raw_options.split(",") if o.strip()]
-        elif isinstance(raw_options, list):
-            options = raw_options
+            options = [o.strip() for o in options.split(",") if o.strip()]
+        elif isinstance(options, list):
+            options = options
 
     return {
         "id": new_id,

@@ -47,7 +47,7 @@ class ResponseService:
         response_data = {
             "survey_id": survey_id,
             "respondent": respondent or "anonymous",
-            "answers": clean_answers,
+            "answers": clean_answers
         }
 
         return self.response_repo.add(response_data)

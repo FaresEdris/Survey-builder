@@ -4,14 +4,12 @@ from app.services.survey_service import SurveyService
 from app.services.response_service import ResponseService
 from app.services.question_service import QuestionService
 
-# Initialize services
 survey_service = SurveyService()
 response_service = ResponseService()
 question_service = QuestionService()
 
 survey_bp = Blueprint("survey", __name__)
 
-# ----------- Web routes -----------
 @survey_bp.route("/surveys/view")
 def view_surveys():
     page = int(request.args.get("page", 1))
@@ -28,7 +26,7 @@ def view_survey_detail(survey_id):
 def view_create_survey():
     return render_template("create_survey.html")
 
-# ----------- API routes -----------
+# ----------- Json API  -----------
 @survey_bp.route("/api/surveys", methods=["GET"])
 def api_get_surveys():
     return jsonify(survey_service.get_all_surveys()), 200
@@ -71,6 +69,7 @@ def create_survey():
 @survey_bp.route("/api/surveys/<int:survey_id>/responses", methods=["POST"])
 def api_submit_response(survey_id):
     data = request.json
+    # add current user either here 
     respondent = data.get("respondent", "anonymous")
     answers = data.get("answers", [])
     response = response_service.submit(survey_id, respondent, answers)

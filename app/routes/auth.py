@@ -16,7 +16,7 @@ def login():
 
         if user and user.check_password(password):
             login_user(user)
-            return redirect(url_for("index"))  # KEEP FRONTEND COMPATIBLE
+            return redirect(url_for("index")) 
 
         flash("Invalid username or password")
 
