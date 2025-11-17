@@ -1,0 +1,43 @@
+.question-block {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f8f9fb;
+    border-left: 4px solid #3498db;
+}
+
+.question-text {
+    margin-bottom: 10px;
+}
+
+.option-line {
+    display: block;
+    margin: 6px 0;
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+}
+
+.buttons {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+#backBtn {
+    background: #aaa;
+    color: #fff;
+    padding: 10px 20px;
+    text-decoration: none;
+}
+
+#backBtn:hover {
+    background: #888;
+}
+
+button {
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+}

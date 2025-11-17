@@ -29,10 +29,14 @@ def register():
         username = request.form.get("username")
         password = request.form.get("password")
 
-        user_service.add_user(username, password)
+        user=user_service.add_user(username, password)
+        if user is None:
+            flash("Username already taken. Please choose a different one.")
+            return redirect(url_for("auth.register"))
 
-        flash("Registration successful. Please login.")
-        return redirect(url_for("auth.login"))
+        user = user_service.find_by_username(username)
+        login_user(user)
+        return redirect(url_for("index"))
 
     return render_template("register.html")
 

@@ -45,7 +45,6 @@ draftBtn.onclick = () => {
         savedAt: new Date().toISOString()
     };
     localStorage.setItem("drafts", JSON.stringify(drafts));
-    alert(`Draft for "${survey.title}" saved!`);
 };
 
 // Reset form
@@ -72,12 +71,12 @@ submitBtn.onclick = async (e) => {
 
         if (!res.ok) throw new Error('Network response was not ok');
         clearDraft();
-        alert("Response submitted successfully!");
+        //alert("Response submitted successfully!");
         backBtn.click();
 
     } catch (err) {
         console.error(err);
-        alert("Failed to submit response.");
+        //alert("Failed to submit response.");
     }
 };
 
@@ -102,10 +101,11 @@ function clearDraft() {
     const saved = localStorage.getItem("drafts");
     savedDrafts = JSON.parse(saved);
     savedDraft = savedDrafts ? savedDrafts[survey.id] : null;
-    if (savedDraft == null) return alert("No drafts to clear.");
+    if (savedDraft == null) return 
+        //alert("No drafts to clear.");
     const drafts = JSON.parse(saved);
     delete drafts[survey.id];
     localStorage.setItem("drafts", JSON.stringify(drafts));
-    alert(`Draft for "${survey.title}" cleared!`);
+    //alert(`Draft for "${survey.title}" cleared!`);
 }
 

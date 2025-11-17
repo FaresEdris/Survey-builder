@@ -1,28 +1,35 @@
 {% extends "base.html" %}
 
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+{% endblock %}
+
 {% block content %}
-<div class="container" style="max-width: 400px; margin: 50px auto; text-align: center;">
+<div class="auth-container">
     <h2>Login</h2>
+
     <form method="POST" action="{{ url_for('auth.login') }}">
-        <div style="margin-bottom: 15px;">
-            <label for="username">Username:</label><br>
-            <input type="text" name="username" id="username" required style="width: 100%; padding: 8px;">
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" name="username" id="username" required>
         </div>
-        <div style="margin-bottom: 15px;">
-            <label for="password">Password:</label><br>
-            <input type="password" name="password" id="password" required style="width: 100%; padding: 8px;">
+
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" name="password" id="password" required>
         </div>
-        <button type="submit" style="padding: 10px 20px;">Login</button>
+
+        <button type="submit" class="auth-btn">Login</button>
     </form>
 
-    <p style="margin-top: 10px;">
+    <p class="auth-switch">
         Don't have an account?
         <a href="{{ url_for('auth.register') }}">Register here</a>
     </p>
 
     {% with messages = get_flashed_messages() %}
       {% if messages %}
-        <ul style="color: red; list-style: none; padding: 0;">
+        <ul class="flash-messages">
           {% for msg in messages %}
             <li>{{ msg }}</li>
           {% endfor %}

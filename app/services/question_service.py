@@ -23,6 +23,11 @@ class QuestionService:
         if survey is None:
             raise LookupError("Survey not found.")
         questions = survey.get("questions", [])
+        if questions is None:
+            return False
+        if question["type"] in ["multiple_choice", "checkbox"]:
+            if len(question["options"]) <= 1:
+                raise ValueError("Options are required for multiple choice and checkbox questions.")
         new_question = map_question(question, questions)
         questions.append(new_question)
         self.survey_repo.update(survey_id, {"questions": questions})

@@ -53,10 +53,10 @@ document.getElementById('submitSurveyBtn').addEventListener('click', async () =>
     const title = document.getElementById('title').value.trim();
     const description = document.getElementById('description').value.trim();
 
-    if (!title || !description) {
+   /*  if (!title || !description) {
         alert('Title and description are required.');
         return;
-    }
+    } */
 
     const questions = Array.from(document.querySelectorAll('.question')).map(q => {
         const text = q.querySelector('.question-text').value.trim();
@@ -68,10 +68,10 @@ document.getElementById('submitSurveyBtn').addEventListener('click', async () =>
         return { text, type, required, options };
     });
 
-    if (questions.length === 0) {
+    /* if (questions.length === 0) {
         alert('Add at least one question.');
         return;
-    }
+    } */
 
     try {
         const res = await fetch('/api/surveys', {
@@ -80,11 +80,11 @@ document.getElementById('submitSurveyBtn').addEventListener('click', async () =>
             body: JSON.stringify({ title, description, questions })
         });
         if (!res.ok) throw new Error('Failed to create survey.');
-        alert('Survey created successfully!');
+        //alert('Survey created successfully!');
         window.location.href = '/surveys/view';
     } catch (err) {
         console.error(err);
-        alert('Error creating survey.');
+        //alert('Error creating survey.');
     }
 });
 

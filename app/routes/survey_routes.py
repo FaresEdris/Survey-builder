@@ -39,30 +39,14 @@ def api_get_survey(survey_id):
 @login_required
 def create_survey():
     data = request.get_json()
-    title = data.get("title")
-    description = data.get("description")
-    questions = data.get("questions", [])
     user_name = current_user.username
-
-    survey_data = {
-        "title": title,
-        "description": description,
-        "questions": [],
-        "creator": user_name
-    }
-
-    # Validation
-    if not title:
-        return jsonify({"error": "Title is required"}), 400
-    if not description:
-        return jsonify({"error": "Description is required"}), 400
-    if not questions:
-        return jsonify({"error": "At least one question is required"}), 400
-
-    new_survey = survey_service.add_survey(survey_data)
-
+    data["creator"] = user_name
+    new_survey = survey_service.add_survey(data)
+    questions = data.get("questions", [])
     for q in questions:
-        question_service.add(new_survey["id"], q)
+        valid=question_service.add(new_survey["id"], q)
+        if not valid:
+            return jsonify({"message": "Failed to add question", "question": q}), 400
 
     return jsonify({"message": "Survey created successfully", "survey": new_survey}), 201
 
@@ -70,7 +54,7 @@ def create_survey():
 def api_submit_response(survey_id):
     data = request.json
     # add current user either here 
-    respondent = data.get("respondent", "anonymous")
+    respondent = current_user.username if current_user.is_authenticated else "Anonymous"
     answers = data.get("answers", [])
     response = response_service.submit(survey_id, respondent, answers)
     return jsonify(response), 201

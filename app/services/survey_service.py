@@ -1,3 +1,4 @@
+from flask import jsonify
 from app.mappers.question import map_question
 from app.repository.json_repository import Repository
 from app.mappers.survey import map_survey
@@ -16,6 +17,17 @@ class SurveyService:
         return self.survey_repo.get_by_id(survey_id)
 
     def add_survey(self, survey_data):
+        title = survey_data.get("title")
+        description = survey_data.get("description")
+        questions = survey_data.get("questions", [])
+
+        if not title and not description:
+            return jsonify({"error": "Title and Description are required"}), 400
+        if not title:
+            return jsonify({"error": "Title is required"}), 400
+        if not description:
+            return jsonify({"error": "Description is required"}), 400
+        
         return self.survey_repo.add(survey_data)
     
     def delete_survey(self, survey_id):

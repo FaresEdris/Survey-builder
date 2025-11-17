@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <title>Survey App</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/surveys.css') }}">
+    {% block css %}
+    {% endblock %}
 </head>
 
 <body>
@@ -18,7 +19,7 @@
 
                 {% if current_user.is_authenticated %}
                     <a href="{{ url_for('survey.view_create_survey') }}">Create Survey</a>
-                    <a href="{{ url_for('survey_control.view_all_responses') }}">Responses</a>
+                    <a href="{{ url_for('survey_control.view_all_responses') }}">Controls</a>
                 {% endif %}
             </div>
 

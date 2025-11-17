@@ -22,10 +22,10 @@ document.getElementById('submitSurveyBtn').addEventListener('click', async () =>
     const title = document.getElementById('title').value.trim();
     const description = document.getElementById('description').value.trim();
 
-    if (!title || !description) {
+/*     if (!title || !description) {
         alert('Title and description are required.');
         return;
-    }
+    } */
 
     const questions = Array.from(document.querySelectorAll('.question')).map(q => {
         const text = q.querySelector('.question-text').value.trim();
@@ -46,11 +46,11 @@ document.getElementById('submitSurveyBtn').addEventListener('click', async () =>
             body: JSON.stringify({ title, description, questions })
         });
         if (!res.ok) throw new Error('Failed to update survey.');
-        alert(JSON.stringify({ title, description, questions }));
+        //alert(JSON.stringify({ title, description, questions }));
         window.location.href = `/surveys/${surveyData.id}/responses`;
     } catch (err) {
         console.error(err);
-        alert('Error saving survey.');
+        //alert('Error saving survey.');
     }
 });
 

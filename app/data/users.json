@@ -23,5 +23,25 @@
         "id": 5,
         "username": "new",
         "password": "scrypt:32768:8:1$6sHBJlOARfz4Dyv2$dc4334dff1febf33c90a90701dd5af1189179d9f6678fe57193b4274417cd0c989de70fe279ea1dd661d7047194a4f7f4a975b0e491d617a09b18f6f9914a5a5"
+    },
+    {
+        "id": 6,
+        "username": "Rawan ",
+        "password": "scrypt:32768:8:1$o2T9MqNt$30071ea5eb2237481d17cdcf0ba70216a5e93d3d99e94b187f3ddab224d197881686a8ef62c64079c20d1d660d85899d11fd1c3c6acf38a1108446cdbc219111"
+    },
+    {
+        "id": 7,
+        "username": "susan",
+        "password": "scrypt:32768:8:1$Pb35KtXe$06903eedc292ba81a5128569691fead2ba4a64aab5a7241caaf030b4ba0df9d70340cf419abe5d2315713ceedd06da2fa1fb7a5d06b4ee35e9ba71943f322af2"
+    },
+    {
+        "id": 8,
+        "username": "salma",
+        "password": "scrypt:32768:8:1$OoBhfZLf$eb2938ca44e375f76c0484d5bb4d27ad7c312c5156f1af1eb807316d8e23cbe74823369daf70a49aa81b2551584994f0c0835fa04ac2cf4809573623324c2f38"
+    },
+    {
+        "id": 9,
+        "username": "salma2",
+        "password": "scrypt:32768:8:1$RCQ9pP8N$c0e142223ed817a8cc0c9ad5ede6c8801d6918d3587dde1254d73605a543b4ee52ecb7154f236ad60d86e29738b9245d2a3f6fdc6701cce3c4eedaf52c3b9bb0"
     }
 ]

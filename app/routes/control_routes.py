@@ -63,7 +63,7 @@ def delete_survey_route(survey_id):
         return redirect(url_for("survey_control.survey_control_page", survey_id=survey_id))
 
     try:
-        response_service.delete_responses_by_survey(survey_id)
+        response_service.delete_by_survey(survey_id)
     except Exception:
         pass
 

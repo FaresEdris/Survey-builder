@@ -1,0 +1,32 @@
+.auth-container {
+    max-width: 400px;
+    margin: 50px auto;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px;
+}
+
+.auth-btn {
+    padding: 10px 20px;
+    width: 100%;
+    cursor: pointer;
+}
+
+.auth-switch {
+    margin-top: 10px;
+}
+
+.flash-messages {
+    color: red;
+    list-style: none;
+    padding: 0;
+    margin-top: 15px;
+}

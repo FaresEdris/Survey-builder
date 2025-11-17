@@ -11,4 +11,7 @@ class UserService:
         return self.user_repo.find_by_username(username)
 
     def add_user(self, username, password):
+        taken = self.find_by_username(username)
+        if taken:
+            return None  
         return self.user_repo.add_user(username, password)

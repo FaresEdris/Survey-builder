@@ -42,16 +42,13 @@
     padding: 3px 8px;
     border-radius: 5px;
     font-size: 0.8em;
-    text-transform: capitalize;
 }
 
-/* status color code */
 .survey-status.published { background: #d1f5d3; color: #1a8c2f; }
 .survey-status.draft     { background: #ffe9b3; color: #8c6a00; }
 
 .survey-meta {
     margin-top: 10px;
-    font-size: 0.9em;
     color: #666;
 }
 
@@ -62,18 +59,11 @@
 
 .page-btn {
     padding: 6px 12px;
-    border: 1px solid #aaa;
     border-radius: 5px;
+    border: 1px solid #aaa;
     text-decoration: none;
-    margin: 0 10px;
-    color: #333;
 }
 
 .page-btn:hover {
     background: #eee;
-}
-
-.page-number {
-    margin: 0 12px;
-    font-weight: bold;
 }

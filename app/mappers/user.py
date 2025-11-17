@@ -5,5 +5,5 @@ def map_user(item: dict, existing_items: list):
     return {
         "id": new_id,
         "username": item["username"],
-        "password": generate_password_hash(item["password"])
+        "password": generate_password_hash(item["password"],salt_length=8)
     }

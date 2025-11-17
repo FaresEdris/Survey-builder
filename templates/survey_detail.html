@@ -1,39 +1,49 @@
 {% extends "base.html" %}
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/survey_detail.css') }}">
+{% endblock %}
 
 {% block content %}
+
 <h2>{{ survey.title }}</h2>
 <p>{{ survey.description }}</p>
 
 <form id="surveyForm">
     {% for question in survey.questions %}
-    <div class="question">
-        <p><strong>{{ loop.index }}. {{ question.text }}</strong></p>
+    <div class="question-block">
+
+        <p class="question-text">
+            <strong>{{ loop.index }}. {{ question.text }}</strong>
+        </p>
 
         {% if question.type == 'multiple' %}
             {% for option in question.options %}
-            <label>
+            <label class="option-line">
                 <input type="radio" name="q_{{ question.id }}" value="{{ option }}">
                 {{ option }}
-            </label><br>
+            </label>
             {% endfor %}
+
         {% elif question.type == 'text' %}
-            <textarea name="q_{{ question.id }}" rows="3" cols="50"></textarea>
+            <textarea name="q_{{ question.id }}" rows="3"></textarea>
+
         {% elif question.type == 'checkbox' %}
             {% for option in question.options %}
-            <label>
+            <label class="option-line">
                 <input type="checkbox" name="q_{{ question.id }}" value="{{ option }}">
                 {{ option }}
-            </label><br>
+            </label>
             {% endfor %}
         {% endif %}
+
     </div>
     <hr>
     {% endfor %}
 
     <div class="buttons">
-        <a href="{{ url_for('survey.view_surveys') }}" id="backBtn">← Back to Surveys</a>
+        <a href="{{ url_for('survey.view_surveys') }}" id="backBtn">← Back</a>
         <button type="button" id="draftBtn">Save Draft</button>
-        <button type="submit" id="submitBtn">Send Survey</button>
+        <button type="submit" id="submitBtn">Send</button>
         <button type="button" id="resetBtn">Reset</button>
     </div>
 </form>
@@ -42,6 +52,5 @@
   const survey = JSON.parse('{{ survey|tojson | safe }}');
 </script>
 <script src="{{ url_for('static', filename='js/survey_detail.js') }}"></script>
-
 
 {% endblock %}
