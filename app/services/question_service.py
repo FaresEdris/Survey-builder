@@ -2,6 +2,7 @@ from app.repository.json_repository import Repository
 from app.mappers.survey import  map_survey
 from app.mappers.question import map_question
 from datetime import datetime, timezone
+from werkzeug.exceptions import NotFound, BadRequest, Forbidden
 
 class QuestionService:
     def __init__(self):
@@ -16,18 +17,18 @@ class QuestionService:
         for q in survey.get("questions", []):
             if int(q["id"]) == int(q_id):
                 return q
-        raise LookupError(f"Question {q_id} not found.")
+        raise NotFound(f"Question {q_id} not found.")
 
     def add(self,survey_id, question):
         survey= self.survey_repo.get_by_id(survey_id)
         if survey is None:
-            raise LookupError("Survey not found.")
+            raise NotFound("Survey not found.")
         questions = survey.get("questions", [])
         if questions is None:
             return False
         if question["type"] in ["multiple_choice", "checkbox"]:
             if len(question["options"]) <= 1:
-                raise ValueError("Options are required for multiple choice and checkbox questions.")
+                raise BadRequest("Options are required for multiple choice and checkbox questions.")
         new_question = map_question(question, questions)
         questions.append(new_question)
         self.survey_repo.update(survey_id, {"questions": questions})
@@ -41,12 +42,12 @@ class QuestionService:
                 before = len(s["questions"])
                 s["questions"] = [q for q in s["questions"] if q["id"] != q_id]
                 if len(s["questions"]) == before:
-                    raise LookupError("Question not found.")
+                    raise NotFound("Question not found.")
                 
                 s["updated_at"] = datetime.now(timezone.utc).isoformat()
                 self.survey_repo.save_db(surveys)
                 return True
-        raise LookupError("Survey not found.")
+        raise NotFound("Survey not found.")
 
     def update(self, survey_id, q_id, updates):
         surveys = self.survey_repo.get_items()
@@ -58,5 +59,5 @@ class QuestionService:
                         s["updated_at"] = datetime.now(timezone.utc).isoformat()
                         self.survey_repo.save_db(surveys)
                         return q
-                raise LookupError("Question not found.")
-        raise LookupError("Survey not found.")
+                raise NotFound("Question not found.")
+        raise NotFound("Survey not found.")

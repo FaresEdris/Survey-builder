@@ -1,26 +1,59 @@
 {% extends "base.html" %}
 
+    
+
 {% block content %}
-<div class="container">
-    <h2>Create a New Survey</h2>
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Create a New Survey</h2>
 
-    <form id="createSurveyForm">
-        <!-- Survey Info -->
-        <label for="title">Survey Title:</label>
-        <input type="text" id="title" name="title" required>
+                <form id="createSurveyForm" class="needs-validation" novalidate>
+                    <!-- Survey Title -->
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Survey Title</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                        <div class="invalid-feedback">Title is required.</div>
+                    </div>
 
-        <label for="description">Description:</label>
-        <textarea id="description" name="description" required rows="4"></textarea>
+                    <!-- Survey Description -->
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                        <div class="invalid-feedback">Description is required.</div>
+                    </div>
 
-        <!-- Questions container -->
-        <div id="questions"></div>
+                    <!-- Questions -->
+                    <div id="questionsContainer" class="mb-3"></div>
 
-        <button type="button" class="btn primary" id="addQuestionBtn">Add Question</button>
-
-        <div style="margin-top:20px;">
-            <button type="button" class="btn primary" id="submitSurveyBtn">Publish Survey</button>
+                    <div class="d-grid gap-2">
+                        <button type="button" id="addQuestionBtn" class="btn btn-outline-primary">Add Question</button>
+                        <button type="submit" id="submitSurveyBtn" class="btn btn-primary">Publish Survey</button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </form>
+    </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
 <script src="{{ url_for('static', filename='js/create_survey.js') }}"></script>
+
+<script>
+(function () {
+    'use strict'
+    const forms = document.querySelectorAll('.needs-validation');
+    Array.from(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+})();
+</script>
 {% endblock %}

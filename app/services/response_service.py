@@ -1,7 +1,7 @@
 from app.repository.json_repository import Repository
 from app.mappers.response import map_response
 from app.mappers.survey import map_survey
-
+from werkzeug.exceptions import NotFound, BadRequest
 
 class ResponseService:
     def __init__(self):
@@ -17,11 +17,17 @@ class ResponseService:
         return res
 
     def get_response(self, response_id):
-        return self.response_repo.get_by_id(response_id)
+        try:
+            return self.response_repo.get_by_id(response_id)
+        except Exception:
+            raise NotFound("Response not found")
 
     def delete_response(self, response_id):
-        return self.response_repo.delete(response_id)
-
+        try:
+            return self.response_repo.delete(response_id)
+        except Exception:
+            raise NotFound("Response not found")
+        
     def delete_by_survey(self, survey_id):
         all_res = self.response_repo.get_items()
         filtered = [r for r in all_res if int(r["survey_id"]) != int(survey_id)]
@@ -30,6 +36,8 @@ class ResponseService:
 
     def submit(self, survey_id, respondent, answers):
         survey = self.survey_repo.get_by_id(survey_id)
+        if not survey:
+            raise NotFound("Survey not found")
 
         valid_ids = {q["id"] for q in survey["questions"]}
 

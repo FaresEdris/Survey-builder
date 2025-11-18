@@ -3,6 +3,7 @@ from app.mappers.question import map_question
 from app.repository.json_repository import Repository
 from app.mappers.survey import map_survey
 from datetime import datetime, timezone
+from werkzeug.exceptions import NotFound, BadRequest, Forbidden
 
 class SurveyService:
     def __init__(self):
@@ -14,7 +15,10 @@ class SurveyService:
         return surveys
     
     def get_survey(self, survey_id):
-        return self.survey_repo.get_by_id(survey_id)
+        try:
+            return self.survey_repo.get_by_id(survey_id)
+        except Exception:
+            raise NotFound("Survey not found")
 
     def add_survey(self, survey_data):
         title = survey_data.get("title")
@@ -22,25 +26,27 @@ class SurveyService:
         questions = survey_data.get("questions", [])
 
         if not title and not description:
-            return jsonify({"error": "Title and Description are required"}), 400
+            return BadRequest("Title and Description are required")
         if not title:
-            return jsonify({"error": "Title is required"}), 400
+            return BadRequest("Title is required")
         if not description:
-            return jsonify({"error": "Description is required"}), 400
+            return BadRequest("Description is required")
         
         return self.survey_repo.add(survey_data)
     
     def delete_survey(self, survey_id):
-        return self.survey_repo.delete(survey_id)
+        try:
+            return self.survey_repo.delete(survey_id)
+        except Exception:
+            raise NotFound("Survey not found")
     #not in use currently
     def update_metadata(self, survey_id, updates):
         updates["updated_at"] = datetime.now(timezone.utc).isoformat()
         return self.survey_repo.update(survey_id, updates)
 
     def get_paginated(self, page=1, per_page=15):
-        all_surveys = self.survey_repo.get_items()
+        all_surveys = self.get_all_surveys()
         visible = [s for s in all_surveys if not s.get("archived")]
-        visible.sort(key=lambda s: s.get("created_at", ""), reverse=True)
 
         total = len(visible)
         start = (page - 1) * per_page
@@ -56,20 +62,20 @@ class SurveyService:
     def update_survey(self, survey_id, data):
         survey = self.survey_repo.get_by_id(survey_id)
         if not survey:
-            raise LookupError("Survey not found")
+            raise NotFound("Survey not found")
 
         title = data.get("title", "").strip()
         description = data.get("description", "").strip()
         if not title:
-            raise ValueError("Title cannot be empty")
+            raise BadRequest("Title cannot be empty")
         if not description:
-            raise ValueError("Description cannot be empty")
+            raise BadRequest("Description cannot be empty")
         survey["title"] = title
         survey["description"] = description
 
         questions_data = data.get("questions", [])
         if not questions_data:
-            raise ValueError("Survey must have at least one question")
+            raise BadRequest("Survey must have at least one question")
         updated_questions = []
         for q in questions_data:
             q_id = q.get("id")
@@ -80,9 +86,9 @@ class SurveyService:
             q_deleted = bool(q.get("deleted", False))
 
             if not q_text:
-                raise ValueError(f"Question text cannot be empty (id={q_id})")
+                raise BadRequest(f"Question text cannot be empty (id={q_id})")
             if q_type in ("multiple", "checkbox") and len(q_options) < 2:
-                raise ValueError(f"Question id={q_id} must have at least 2 options")
+                raise BadRequest(f"Question id={q_id} must have at least 2 options")
 
             existing_q = next((ex for ex in survey.get("questions", []) if ex["id"] == q_id), None)
             if existing_q:
@@ -111,11 +117,11 @@ class SurveyService:
     def archive(self, survey_id, user):
         survey = self.get_survey(survey_id)
         if survey["creator"] != user.username:
-            raise PermissionError("Not allowed.")
+            raise Forbidden("Not allowed.")
         return self.survey_repo.update(survey_id, {"archived": True})
 
     def unarchive(self, survey_id, user):
         survey = self.get_survey(survey_id)
         if survey["creator"] != user.username:
-            raise PermissionError("Not allowed.")
+            raise Forbidden("Not allowed.")
         return self.survey_repo.update(survey_id, {"archived": False})

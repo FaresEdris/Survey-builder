@@ -1,41 +1,61 @@
 {% extends "base.html" %}
+
 {% block content %}
-<h2>Responses for: {{ survey.title }}</h2>
+<div class="container mt-4">
 
-{% if survey.archived %}
-    <p style="color:red;"><strong>This survey is archived.</strong></p>
-{% endif %}
+    <h2 class="mb-4">Responses for: {{ survey.title }}</h2>
 
-<p><a href="{{ url_for('survey_control.survey_control_page', survey_id=survey.id) }}">← Back to Survey Controls</a></p>
+    {% if survey.archived %}
+    <div class="alert alert-danger">
+        This survey is archived.
+    </div>
+    {% endif %}
 
-{% if responses %}
-    {% for r in responses %}
-        <div style="border:1px solid #ddd; padding:10px; margin-bottom:10px;">
-            <strong>Response #{{ r.id }}</strong>
-            <p><strong>Respondent:</strong> {{ r.respondent or "Anonymous" }}</p>
-            <p><strong>Submitted at:</strong> {{ r.get('submitted_at', 'n/a') }}</p>
+    <div class="mb-3">
+        <a href="{{ url_for('survey_control.view_all_responses') }}" class="btn btn-secondary">
+            ← Back to All Surveys
+        </a>
+    </div>
 
-            <ul>
-            {% for ans in r.answers %}
-                {% set q = survey.questions | selectattr('id', 'equalto', ans.question_id) | first %}
-                <li>
-                    <strong>{{ q.text if q else ('Question '+ans.question_id|string) }}:</strong>
-                    {{ ans.answer }}
-                </li>
-            {% endfor %}
-            </ul>
+    {% if responses %}
+    <div class="row g-3">
 
-            <!-- Optional: delete single response -->
-             {% if not true %}
-            <form method="POST" action="{{ url_for('survey_control.delete_response', response_id=r.id) }}"
-                  onsubmit="return confirm('Delete this response?');">
-                <button type="submit">Delete Response</button>
-            </form>
-            {% endif %}
+        {% for r in responses %}
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-2">Response #{{ r.id }}</h5>
+                    <p class="mb-1"><strong>Respondent:</strong> {{ r.respondent or "Anonymous" }}</p>
+                    <p class="mb-2"><strong>Submitted at:</strong> {{ r.get('submitted_at', 'n/a') }}</p>
+
+                    <ul class="list-group list-group-flush mb-3">
+                        {% for ans in r.answers %}
+                        {% set q = survey.questions | selectattr('id', 'equalto', ans.question_id) | first %}
+                        <li class="list-group-item">
+                            <strong>{{ q.text if q else ('Question '+ans.question_id|string) }}:</strong>
+                            {{ ans.answer }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+
+                    <!-- Optional: Delete response -->
+                    {% if false %}
+                    <form method="POST" action="{{ url_for('survey_control.delete_response', response_id=r.id) }}"
+                          onsubmit="return confirm('Delete this response?');">
+                        <button type="submit" class="btn btn-sm btn-danger">Delete Response</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-    {% endfor %}
-{% else %}
-    <p>No responses yet.</p>
-{% endif %}
+        {% endfor %}
 
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        No responses yet.
+    </div>
+    {% endif %}
+
+</div>
 {% endblock %}

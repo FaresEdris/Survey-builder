@@ -1,60 +1,31 @@
 [
     {
         "id": 1,
-        "title": "Updated Survey Title",
-        "description": "Updated description3",
+        "title": "survey",
+        "description": "title",
         "questions": [
             {
                 "id": 1,
                 "text": "Q1",
-                "type": "text",
-                "options": [],
-                "deleted": false
-            },
-            {
-                "id": 2,
-                "text": "Q2",
                 "type": "multiple",
                 "options": [
-                    "opt1",
-                    "opt3",
-                    "opt4"
+                    "op",
+                    "op2"
                 ],
-                "deleted": false
-            },
-            {
-                "id": 3,
-                "text": "Q3",
-                "type": "text",
-                "options": [],
-                "deleted": false
-            },
-            {
-                "id": 4,
-                "text": "up Q",
-                "type": "text",
-                "options": [],
-                "deleted": false
+                "deleted": false,
+                "required": false,
+                "created_at": "2025-11-17T15:48:33.897536+00:00",
+                "updated_at": "2025-11-17T15:48:52.469532+00:00"
             }
         ],
         "creator": "Faresedris",
         "archived": false,
-        "created_at": "2025-11-15T14:21:08.071768",
-        "updated_at": "2025-11-15T18:13:13.884230+00:00"
+        "created_at": "2025-11-17T15:45:12.014470+00:00",
+        "updated_at": "2025-11-17T15:48:52.470533+00:00"
     },
     {
         "id": 2,
-        "title": "Updated Survey Title",
-        "description": "Updated description",
-        "questions": [],
-        "creator": "admin",
-        "archived": false,
-        "created_at": "2025-11-16T10:01:33.022995+00:00",
-        "updated_at": "2025-11-16T10:03:18.685914+00:00"
-    },
-    {
-        "id": 3,
-        "title": "remade",
+        "title": "survey2",
         "description": "desc",
         "questions": [
             {
@@ -64,237 +35,52 @@
                 "options": [],
                 "deleted": false,
                 "required": false,
-                "created_at": "2025-11-16T14:05:56.055988+00:00",
-                "updated_at": "2025-11-16T14:55:03.147388+00:00"
-            },
-            {
-                "id": 2,
-                "text": "Q2",
-                "type": "text",
-                "options": [],
-                "deleted": false,
-                "required": false,
-                "created_at": "2025-11-16T14:05:56.078990+00:00",
-                "updated_at": "2025-11-16T14:55:03.147388+00:00"
-            }
-        ],
-        "creator": "new",
-        "archived": false,
-        "created_at": "2025-11-16T14:05:56.021991+00:00",
-        "updated_at": "2025-11-16T14:55:03.147388+00:00"
-    },
-    {
-        "id": 4,
-        "title": "sunday",
-        "description": "desc",
-        "questions": [
-            {
-                "id": 1,
-                "text": "yes",
-                "type": "multiple",
-                "options": [
-                    "op",
-                    "op",
-                    "op"
-                ],
-                "deleted": false,
-                "required": false,
-                "created_at": null,
-                "updated_at": "2025-11-16T21:48:44.521557+00:00"
-            },
-            {
-                "id": 2,
-                "text": "op2",
-                "type": "checkbox",
-                "options": [
-                    "op",
-                    "op",
-                    "op"
-                ],
-                "deleted": false,
-                "required": false,
-                "created_at": null,
-                "updated_at": "2025-11-16T21:48:44.521557+00:00"
-            }
-        ],
-        "creator": "new",
-        "archived": false,
-        "created_at": "2025-11-16T21:03:47.512944+00:00",
-        "updated_at": "2025-11-16T21:48:44.521557+00:00"
-    },
-    {
-        "id": 5,
-        "title": "alone",
-        "description": "desc",
-        "questions": [
-            {
-                "id": 1,
-                "text": "no1,",
-                "type": "text",
-                "options": [],
-                "deleted": false,
-                "required": true,
-                "created_at": "2025-11-17T10:18:21.200147+00:00",
+                "created_at": "2025-11-17T16:08:12.608370+00:00",
                 "updated_at": null
             }
         ],
         "creator": "Faresedris",
         "archived": false,
-        "created_at": "2025-11-17T10:18:20.806165+00:00",
+        "created_at": "2025-11-17T16:08:12.488374+00:00",
         "updated_at": null
     },
     {
-        "id": 6,
-        "title": "Survey one",
-        "description": "servy one descriotion",
-        "questions": [
-            {
-                "id": 1,
-                "text": "question",
-                "type": "multiple",
-                "options": [
-                    "test",
-                    "test2",
-                    "test3"
-                ],
-                "deleted": false,
-                "required": false,
-                "created_at": "2025-11-17T12:18:24.672028+00:00",
-                "updated_at": null
-            },
-            {
-                "id": 2,
-                "text": "test",
-                "type": "text",
-                "options": [],
-                "deleted": false,
-                "required": false,
-                "created_at": "2025-11-17T12:18:24.694028+00:00",
-                "updated_at": null
-            }
-        ],
-        "creator": "salma",
-        "archived": false,
-        "created_at": "2025-11-17T12:18:24.628032+00:00",
-        "updated_at": null
-    },
-    {
-        "id": 7,
-        "title": "Survey one",
-        "description": "servy one descriotion",
-        "questions": [
-            {
-                "id": 1,
-                "text": "question",
-                "type": "multiple",
-                "options": [
-                    "test",
-                    "test2",
-                    "test3"
-                ],
-                "deleted": false,
-                "required": false,
-                "created_at": "2025-11-17T12:18:27.669865+00:00",
-                "updated_at": null
-            },
-            {
-                "id": 2,
-                "text": "test",
-                "type": "text",
-                "options": [],
-                "deleted": false,
-                "required": false,
-                "created_at": "2025-11-17T12:18:27.687885+00:00",
-                "updated_at": null
-            }
-        ],
-        "creator": "salma",
-        "archived": false,
-        "created_at": "2025-11-17T12:18:27.651889+00:00",
-        "updated_at": null
-    },
-    {
-        "id": 8,
-        "title": "Survey one",
-        "description": "servy one descriotion",
-        "questions": [
-            {
-                "id": 1,
-                "text": "question",
-                "type": "multiple",
-                "options": [
-                    "test",
-                    "test2",
-                    "test3"
-                ],
-                "deleted": false,
-                "required": false,
-                "created_at": "2025-11-17T12:18:31.288669+00:00",
-                "updated_at": null
-            },
-            {
-                "id": 2,
-                "text": "test",
-                "type": "text",
-                "options": [],
-                "deleted": false,
-                "required": false,
-                "created_at": "2025-11-17T12:18:31.307669+00:00",
-                "updated_at": null
-            }
-        ],
-        "creator": "salma",
-        "archived": false,
-        "created_at": "2025-11-17T12:18:31.263671+00:00",
-        "updated_at": null
-    },
-    {
-        "id": 9,
-        "title": "test",
+        "id": 3,
+        "title": "18/11",
         "description": "desc",
         "questions": [
             {
                 "id": 1,
-                "text": "test",
-                "type": "text",
-                "options": [],
+                "text": "first Q1",
+                "type": "checkbox",
+                "options": [
+                    "op1",
+                    "op2",
+                    "op3"
+                ],
                 "deleted": false,
                 "required": false,
-                "created_at": "2025-11-17T12:24:13.136159+00:00",
-                "updated_at": null
+                "created_at": "2025-11-17T16:09:08.027373+00:00",
+                "updated_at": "2025-11-18T08:44:53.829249+00:00"
             },
             {
                 "id": 2,
-                "text": "test2",
-                "type": "multiple",
-                "options": [
-                    "op",
-                    "op",
-                    "op"
-                ],
-                "deleted": false,
-                "required": false,
-                "created_at": "2025-11-17T12:24:13.157159+00:00",
-                "updated_at": null
-            },
-            {
-                "id": 3,
-                "text": "test",
+                "text": "Q2",
                 "type": "checkbox",
                 "options": [
-                    "op",
-                    "op",
-                    "op"
+                    "op1",
+                    "op2",
+                    "op3"
                 ],
-                "deleted": false,
+                "deleted": true,
                 "required": false,
-                "created_at": "2025-11-17T12:24:13.190154+00:00",
-                "updated_at": null
+                "created_at": "2025-11-17T16:09:08.093363+00:00",
+                "updated_at": "2025-11-18T08:44:53.829249+00:00"
             }
         ],
-        "creator": "salma",
+        "creator": "Faresedris",
         "archived": false,
-        "created_at": "2025-11-17T12:24:13.060226+00:00",
-        "updated_at": null
+        "created_at": "2025-11-17T16:09:07.948373+00:00",
+        "updated_at": "2025-11-18T08:44:53.829249+00:00"
     }
 ]

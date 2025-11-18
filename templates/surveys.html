@@ -1,53 +1,64 @@
 {% extends "base.html" %}
-{% block css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/surveys.css') }}">
-{% endblock %}
+
 
 {% block content %}
+<div class="container my-5">
+    <h2 class="text-center mb-4">All Surveys</h2>
 
-<h2 class="page-title">All Surveys</h2>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for s in surveys %}
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">
+                        <a href="{{ url_for('survey.view_survey_detail', survey_id=s.id) }}">
+                            {{ s.title }}
+                        </a>
+                    </h5>
 
-<div class="survey-grid">
-    {% for s in surveys %}
-    <div class="survey-card">
+                    {% if s.status %}
+                    <span class="badge bg-{{ 'success' if s.status == 'published' else 'warning' }}">
+                        {{ s.status|capitalize }}
+                    </span>
+                    {% endif %}
 
-        <div class="survey-card-header">
-            <h3 class="survey-title">
-                <a href="{{ url_for('survey.view_survey_detail', survey_id=s.id) }}">
-                    {{ s.title }}
-                </a>
-            </h3>
+                    <p class="card-text mt-2 text-muted">
+                        {% if s.creator %}
+                            Created by <strong>{{ s.creator }}</strong>
+                        {% endif %}
+                        {% if s.created_at %}
+                            · {{ s.created_at }}
+                        {% endif %}
+                    </p>
 
-            {% if s.status %}
-            <span class="survey-status {{ s.status }}">
-                {{ s.status|capitalize }}
-            </span>
-            {% endif %}
+                    <div class="mt-auto">
+                        <a href="{{ url_for('survey.view_survey_detail', survey_id=s.id) }}" class="btn btn-primary btn-sm">View</a>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <p class="survey-meta">
-            {% if s.creator %}
-                Created by <strong>{{ s.creator }}</strong>
-            {% endif %}
-            {% if s.created_at %}
-                · {{ s.created_at }}
-            {% endif %}
-        </p>
-
+        {% endfor %}
     </div>
-    {% endfor %}
+
+    <!-- Pagination -->
+    <nav aria-label="Survey pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if has_prev %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('survey.view_surveys', page=page-1) }}">⬅ Previous</a>
+            </li>
+            {% endif %}
+
+            <li class="page-item disabled">
+                <span class="page-link">Page {{ page }}</span>
+            </li>
+
+            {% if has_next %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('survey.view_surveys', page=page+1) }}">Next ➡</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
 </div>
-
-<div class="pagination">
-    {% if has_prev %}
-        <a class="page-btn" href="{{ url_for('survey.view_surveys', page=page-1) }}">⬅ Previous</a>
-    {% endif %}
-
-    <span class="page-number">Page {{ page }}</span>
-
-    {% if has_next %}
-        <a class="page-btn" href="{{ url_for('survey.view_surveys', page=page+1) }}">Next ➡</a>
-    {% endif %}
-</div>
-
 {% endblock %}

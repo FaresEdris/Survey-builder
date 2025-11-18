@@ -1,77 +1,116 @@
 const questionTypes = ['text', 'multiple', 'checkbox'];
 let questionCounter = 0;
-const questionsContainer = document.getElementById('questions');
+const questionsContainer = document.getElementById('questionsContainer');
+const addQuestionBtn = document.getElementById('addQuestionBtn');
 
-document.getElementById('addQuestionBtn').addEventListener('click', () => {
-    questionCounter++;
-    const questionCard = document.createElement('div');
-    questionCard.className = 'question';
-    questionCard.dataset.index = questionCounter;
+let questionCount = 0;
 
-    questionCard.innerHTML = `
-        <h4>Question ${questionCounter}</h4>
-        <label>Text:</label>
-        <input type="text" class="question-text" required>
+addQuestionBtn.addEventListener('click', () => {
+    questionCount++;
+    const questionDiv = document.createElement('div');
+    questionDiv.classList.add('card', 'mb-3', 'p-3', 'question-item', 'shadow-sm');
+    questionDiv.setAttribute('data-id', questionCount);
 
-        <label>Type:</label>
-        <select class="question-type">
-            ${questionTypes.map(t => `<option value="${t}">${t}</option>`).join('')}
-        </select>
-
-        <div class="question-options-container" style="display:none;">
-            <label>Options (comma separated):</label>
-            <input type="text" class="question-options">
+    questionDiv.innerHTML = `
+        <div class="mb-2 d-flex justify-content-between align-items-center">
+            <h5>Question ${questionCount}</h5>
+            <button type="button" class="btn btn-sm btn-danger remove-question-btn">Remove</button>
         </div>
-
-        <label>
-            <input type="checkbox" class="question-required"> Required
-        </label>
-
-        <button type="button" class="remove-question-btn">Remove</button>
-        <hr>
+        <div class="mb-2">
+            <label class="form-label">Question Text</label>
+            <input type="text" class="form-control question-text" required>
+            <div class="invalid-feedback">Question text is required.</div>
+        </div>
+        <div class="mb-2">
+            <label class="form-label">Type</label>
+            <select class="form-select question-type">
+                <option value="text">Text</option>
+                <option value="multiple">Multiple Choice</option>
+                <option value="checkbox">Checkbox</option>
+            </select>
+        </div>
+        <div class="mb-2 question-options d-none">
+            <label class="form-label">Options (comma separated)</label>
+            <input type="text" class="form-control question-options-input">
+            <div class="invalid-feedback">At least 2 options are required.</div>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input question-required" type="checkbox">
+            <label class="form-check-label">Required</label>
+        </div>
     `;
 
-    questionsContainer.appendChild(questionCard);
+    questionsContainer.appendChild(questionDiv);
 
-    const typeSelect = questionCard.querySelector('.question-type');
-    const optionsDiv = questionCard.querySelector('.question-options-container');
+    // Show/hide options based on type
+    const typeSelect = questionDiv.querySelector('.question-type');
+    const optionsDiv = questionDiv.querySelector('.question-options');
     typeSelect.addEventListener('change', () => {
-        if (typeSelect.value === 'text') {
-            optionsDiv.style.display = 'none';
+        if (typeSelect.value === 'multiple' || typeSelect.value === 'checkbox') {
+            optionsDiv.classList.remove('d-none');
+            optionsDiv.querySelector('input').required = true;
         } else {
-            optionsDiv.style.display = 'block';
+            optionsDiv.classList.add('d-none');
+            optionsDiv.querySelector('input').required = false;
         }
     });
 
-    questionCard.querySelector('.remove-question-btn').addEventListener('click', () => {
-        questionsContainer.removeChild(questionCard);
+    // Remove question
+    questionDiv.querySelector('.remove-question-btn').addEventListener('click', () => {
+        questionDiv.remove();
     });
 });
+
 
 // Submit survey
 document.getElementById('submitSurveyBtn').addEventListener('click', async () => {
     const title = document.getElementById('title').value.trim();
     const description = document.getElementById('description').value.trim();
 
-   /*  if (!title || !description) {
+     if (!title || !description) {
         alert('Title and description are required.');
         return;
-    } */
+    } 
 
-    const questions = Array.from(document.querySelectorAll('.question')).map(q => {
-        const text = q.querySelector('.question-text').value.trim();
+    const questionsArr = Array.from(document.querySelectorAll('.question-item'));
+    let hasError = false;
+
+    const questions = questionsArr.map(q => {
+        const textInput = q.querySelector('.question-text');
+        const text = textInput.value.trim();
         const type = q.querySelector('.question-type').value;
         const required = q.querySelector('.question-required').checked;
-        const optionsInput = q.querySelector('.question-options');
+        const optionsInput = q.querySelector('.question-options-input');
         const options = optionsInput ? optionsInput.value.split(',').map(o => o.trim()).filter(o => o) : [];
 
-        return { text, type, required, options };
-    });
+        // Reset error styles
+        textInput.classList.remove('is-invalid');
+        if (optionsInput) optionsInput.classList.remove('is-invalid');
 
-    /* if (questions.length === 0) {
-        alert('Add at least one question.');
+        // Validation
+        if (!text) {
+            textInput.classList.add('is-invalid');
+            hasError = true;
+        }
+
+        if ((type === 'multiple' || type === 'checkbox') && options.length < 2) {
+            optionsInput.classList.add('is-invalid');
+            hasError = true;
+        }
+
+        return { text, type, required, options };
+});
+
+    if (hasError) {
+    // Optionally scroll to the first invalid input
+        document.querySelector('.is-invalid').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return; // stop the fetch
+    }
+
+    if (questions.length === 0) {
+        alert('Add at least one valid question.');
         return;
-    } */
+    }
 
     try {
         const res = await fetch('/api/surveys', {

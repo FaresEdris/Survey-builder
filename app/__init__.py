@@ -1,6 +1,7 @@
 from flask import Flask, render_template
 from flask_login import LoginManager
 from app.services.user_service import UserService
+from werkzeug.exceptions import NotFound, BadRequest
 
 def create_app():
     app = Flask(__name__,template_folder='../templates', static_folder='../static')
@@ -25,5 +26,14 @@ def create_app():
     @app.route("/")
     def index():
         return render_template("index.html")
+    
+    @app.errorhandler(404)
+    def not_found_error(NotFound):   
+        return render_template("errors/404.html"), 404
+    
+    @app.errorhandler(400)
+    def bad_request_error(BadRequest):   
+        return render_template("errors/400.html"), 400
+    
 
     return app

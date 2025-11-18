@@ -19,8 +19,8 @@
         {% if question.type == 'multiple' %}
             {% for option in question.options %}
             <label class="option-line">
-                <input type="radio" name="q_{{ question.id }}" value="{{ option }}">
-                {{ option }}
+                {{ option }}<input type="radio" name="q_{{ question.id }}" value="{{ option }}">
+                
             </label>
             {% endfor %}
 
@@ -30,8 +30,7 @@
         {% elif question.type == 'checkbox' %}
             {% for option in question.options %}
             <label class="option-line">
-                <input type="checkbox" name="q_{{ question.id }}" value="{{ option }}">
-                {{ option }}
+                {{ option }}<input type="checkbox" name="q_{{ question.id }}" value="{{ option }}">
             </label>
             {% endfor %}
         {% endif %}

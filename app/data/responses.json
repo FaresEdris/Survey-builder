@@ -2,58 +2,19 @@
     {
         "id": 1,
         "survey_id": 1,
-        "respondent": "anonymous",
+        "respondent": "Faresedris",
         "answers": [
             {
                 "question_id": 1,
-                "answer": "yes"
-            },
-            {
-                "question_id": 2,
-                "answer": "opt1"
-            },
-            {
-                "question_id": 3,
-                "answer": "no"
+                "answer": "op"
             }
-        ]
+        ],
+        "submitted_at": "2025-11-17T15:49:07.575712+00:00"
     },
     {
         "id": 2,
-        "survey_id": 4,
-        "respondent": "anonymous",
-        "answers": [
-            {
-                "question_id": 1,
-                "answer": "new"
-            },
-            {
-                "question_id": 2,
-                "answer": "op2"
-            }
-        ],
-        "submitted_at": "2025-11-16T13:06:53.969680+00:00"
-    },
-    {
-        "id": 4,
         "survey_id": 3,
-        "respondent": "anonymous",
-        "answers": [
-            {
-                "question_id": 1,
-                "answer": "yes"
-            },
-            {
-                "question_id": 2,
-                "answer": "yes"
-            }
-        ],
-        "submitted_at": "2025-11-16T14:06:15.319945+00:00"
-    },
-    {
-        "id": 5,
-        "survey_id": 9,
-        "respondent": "salma",
+        "respondent": "Faresedris",
         "answers": [
             {
                 "question_id": 1,
@@ -61,13 +22,9 @@
             },
             {
                 "question_id": 2,
-                "answer": ""
-            },
-            {
-                "question_id": 3,
-                "answer": "[]"
+                "answer": "['op1', 'op2']"
             }
         ],
-        "submitted_at": "2025-11-17T12:24:56.455838+00:00"
+        "submitted_at": "2025-11-17T16:09:18.588795+00:00"
     }
 ]

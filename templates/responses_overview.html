@@ -1,23 +1,92 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Survey Responses Overview</h2>
+<div class="container mt-4">
 
-{% if surveys %}
-  <ul>
-    {% for survey in surveys %}
-      <li>
-        <strong>{{ survey.title }}</strong> — {{ survey.description }}
-        <br>
-        <a href="{{ url_for('survey_control.survey_control_page', survey_id=survey.id) }}">
-          View Responses
+    <h2 class="mb-4">Survey Responses Overview</h2>
+
+    {% if surveys %}
+    <div class="list-group">
+
+        {% for survey in surveys %}
+        <div class="list-group-item py-4">
+
+            <!-- Title + Description -->
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h5 class="mb-1">
+                        {{ survey.title }}
+                        {% if survey.archived %}
+                            <span class="badge bg-danger ms-2">Archived</span>
+                        {% endif %}
+                    </h5>
+                    <p class="text-muted mb-1">{{ survey.description }}</p>
+
+                    <small class="text-secondary">
+                        Created: {{ survey.created_at }}
+                    </small>
+                </div>
+
+                <!-- View Responses button -->
+                <a href="{{ url_for('survey_control.survey_responses_list', survey_id=survey.id) }}"
+                   class="btn btn-outline-primary btn-sm">
+                    Responses
+                </a>
+            </div>
+
+            <hr>
+
+            <!-- Action buttons -->
+            <div class="d-flex gap-2 flex-wrap">
+
+                <!-- Edit -->
+                <a href="{{ url_for('survey_control.edit_survey', survey_id=survey.id) }}"
+                   class="btn btn-sm btn-warning">
+                    Edit
+                </a>
+
+                <!-- Archive / Unarchive -->
+                {% if survey.archived %}
+                <form method="POST" action="{{ url_for('survey_control.unarchive_survey', survey_id=survey.id) }}">
+                    <button type="submit" class="btn btn-sm btn-secondary">
+                        Unarchive
+                    </button>
+                </form>
+                {% else %}
+                <form method="POST" action="{{ url_for('survey_control.archive_survey', survey_id=survey.id) }}">
+                    <button type="submit" class="btn btn-sm btn-outline-secondary">
+                        Archive
+                    </button>
+                </form>
+                {% endif %}
+
+                <!-- Delete -->
+                <form method="POST"
+                      action="{{ url_for('survey_control.delete_survey_route', survey_id=survey.id) }}"
+                      onsubmit="return confirm('Delete this survey and ALL responses? This cannot be undone.');">
+                    <button type="submit" class="btn btn-sm btn-danger">
+                        Delete
+                    </button>
+                </form>
+
+            </div>
+
+        </div>
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+    <div class="alert alert-info mt-3">
+        No surveys found yet.
+    </div>
+    {% endif %}
+
+    <div class="mt-4">
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">
+            ⬅ Back to Home
         </a>
-      </li>
-    {% endfor %}
-  </ul>
-{% else %}
-  <p>No surveys found yet.</p>
-{% endif %}
+    </div>
 
-<a href="{{ url_for('index') }}">⬅ Back to Home</a>
+</div>
 {% endblock %}

@@ -38,15 +38,10 @@ class Repository:
         for item in self.get_items():
             if item.get("id") == item_id:
                 return item
-        raise LookupError(f"{self.entity_name} with ID {item_id} not found.")
 
     def delete(self, item_id):
         data = self.get_items()
         new_data = [item for item in data if item.get("id") != item_id]
-
-        if len(data) == len(new_data):
-            raise LookupError(f"{self.entity_name} with ID {item_id} not found.")
-
         self.save_db(new_data)
         return True
 
@@ -57,5 +52,3 @@ class Repository:
                 item.update(updates)
                 self.save_db(data)
                 return item
-
-        raise LookupError(f"{self.entity_name} with ID {item_id} not found.")
