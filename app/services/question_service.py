@@ -1,28 +1,25 @@
-from app.repository.json_repository import Repository
-from app.mappers.survey import  map_survey
 from app.mappers.question import map_question
-from datetime import datetime, timezone
+from app.services.survey_service import SurveyService
 from werkzeug.exceptions import NotFound, BadRequest
 
 class QuestionService:
     def __init__(self):
-        self.survey_repo = Repository("surveys", map_survey)
+        self.survey_service = SurveyService()
+
 
     def get_all(self, survey_id):
-        survey = self.survey_repo.get_by_id(survey_id)
+        survey = self.survey_service.get_survey(survey_id)
         return survey.get("questions", [])
     
     def get(self, survey_id, q_id):
-        survey = self.survey_repo.get_by_id(survey_id)
+        survey = self.survey_service.get_survey(survey_id)
         for q in survey.get("questions", []):
             if int(q["id"]) == int(q_id):
                 return q
         raise NotFound(f"Question {q_id} not found.")
 
     def add(self,survey_id, question):
-        survey= self.survey_repo.get_by_id(survey_id)
-        if survey is None:
-            raise NotFound("Survey not found.")
+        survey= self.survey_service.get_survey(survey_id)
         questions = survey.get("questions", [])
         if questions is None:
             return False
@@ -34,30 +31,3 @@ class QuestionService:
         self.survey_repo.update(survey_id, {"questions": questions})
         return True
 
-
-    def delete(self, survey_id, q_id):
-        surveys = self.survey_repo.get_items()
-        for s in surveys:
-            if s["id"] == survey_id:
-                before = len(s["questions"])
-                s["questions"] = [q for q in s["questions"] if q["id"] != q_id]
-                if len(s["questions"]) == before:
-                    raise NotFound("Question not found.")
-                
-                s["updated_at"] = datetime.now(timezone.utc).isoformat()
-                self.survey_repo.save_db(surveys)
-                return True
-        raise NotFound("Survey not found.")
-
-    def update(self, survey_id, q_id, updates):
-        surveys = self.survey_repo.get_items()
-        for s in surveys:
-            if s["id"] == survey_id:
-                for q in s["questions"]:
-                    if q["id"] == q_id:
-                        q.update(updates)
-                        s["updated_at"] = datetime.now(timezone.utc).isoformat()
-                        self.survey_repo.save_db(surveys)
-                        return q
-                raise NotFound("Question not found.")
-        raise NotFound("Survey not found.")

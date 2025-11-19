@@ -18,7 +18,6 @@ class Repository:
             with open(self.file_path, "r") as f:
                 return json.load(f)
         except (json.JSONDecodeError, ValueError):
-            # Reset corrupted file
             self.save_db([])
             return []
 

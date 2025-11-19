@@ -27,7 +27,6 @@ class SurveyService:
     def add_survey(self, survey_data):
         title = survey_data.get("title")
         description = survey_data.get("description")
-        questions = survey_data.get("questions", [])
 
         if not title and not description:
             return BadRequest("Title and Description are required")
@@ -36,6 +35,7 @@ class SurveyService:
         if not description:
             return BadRequest("Description is required")
         
+
         return self.survey_repo.add(survey_data)
     
     def delete_survey(self, survey_id):

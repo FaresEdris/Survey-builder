@@ -20,9 +20,9 @@ def view_all_responses():
 @login_required
 def survey_responses_list(survey_id):
     page = request.args.get("page", 1, type=int)
-    per_page = 3
+    per_page = 12
     survey = survey_service.get_survey(survey_id, username=current_user.username)
-    data = response_service.pageinate_responses(survey_id=survey_id,page=page,per_page=per_page)
+    data = response_service.pageinate_responses(survey_id,page=page,per_page=per_page)
     return render_template(
         "survey_responses_list.html",
         survey=survey,
@@ -45,10 +45,14 @@ def edit_survey(survey_id):
     survey_service.update_survey(survey_id, request.json, username=current_user.username)
     return redirect(url_for('survey_control.view_all_responses'))
 
-@survey_control_bp.route("/surveys/<int:survey_id>/delete", methods=["POST"])
+@survey_control_bp.route("/surveys/<int:survey_id>/delete", methods=["Post"])
 @login_required
 def delete_survey_route(survey_id):
-    survey_service.delete_survey(survey_id, username=current_user.username)
+    try:
+        response_service.delete_by_survey(survey_id)
+    except:
+        pass
+    survey_service.delete_survey(survey_id)
     return redirect(url_for("survey_control.view_all_responses"))
 
 @survey_control_bp.route("/surveys/<int:survey_id>/archive", methods=["POST"])

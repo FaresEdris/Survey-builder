@@ -15,6 +15,7 @@
         <div id="errorContainer"></div>
 
         {% for question in survey.questions %}
+        {% if not question.deleted %}
         <div class="card mb-4 p-3 question-block" data-qid="{{ question.id }}">
             <p class="fw-bold mb-2">{{ loop.index }}. {{ question.text }}
                 {% if question.required %}
@@ -43,8 +44,7 @@
                 </div>
                 {% endfor %}
             {% endif %}
-
-            <!-- Validation feedback -->
+        {% endif %}
             <div class="invalid-feedback mt-2">
                 This question is required.
             </div>
@@ -52,7 +52,7 @@
         {% endfor %}
 
         <div class="d-flex gap-2 mt-4">
-            <a href="{{ url_for('survey.view_surveys') }}" class="btn btn-secondary" id="backBtn">← Back</a>
+            <a href="{{ url_for('survey.view_surveys') }}" class="btn btn-secondary" id="backBtn">Back</a>
             <button type="button" class="btn btn-outline-primary" id="draftBtn">Save Draft</button>
             <button type="submit" class="btn btn-primary" id="submitBtn">Send</button>
             <button type="button" class="btn btn-warning" id="resetBtn">Reset</button>

@@ -1,13 +1,12 @@
 from flask import Flask, render_template
 from flask_login import LoginManager
 from app.services.user_service import UserService
-from werkzeug.exceptions import NotFound, BadRequest
 
 def create_app():
     app = Flask(__name__,template_folder='../templates', static_folder='../static')
     app.secret_key = "secret"
     login_manager = LoginManager()
-    login_manager.login_view = "auth.login"   # because blueprint = "auth"
+    login_manager.login_view = "auth.login"   
     login_manager.init_app(app)
     user_service = UserService()
 

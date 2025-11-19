@@ -12,7 +12,8 @@ document.getElementById('addQuestionBtn').addEventListener('click', () => {
         text: '',
         type: 'text',
         options: [],
-        required: false
+        required: false,
+        deleted: false
     }, false);
 });
 
@@ -40,7 +41,7 @@ document.getElementById('submitSurveyBtn').addEventListener('click', async () =>
     const questions = Array.from(document.querySelectorAll('.question')).map((q, index) => {
         const textInput = q.querySelector('.question-text');
         const typeSelect = q.querySelector('.question-type');
-        const required = q.querySelector('.question-required').checked;
+        let required = q.querySelector('.question-required').checked;
 
         const optionsInput = q.querySelector('.question-options');
         const options = optionsInput
@@ -49,12 +50,17 @@ document.getElementById('submitSurveyBtn').addEventListener('click', async () =>
 
         const id = q.dataset.id ? parseInt(q.dataset.id) : null;
         const deleted = q.dataset.deleted === "true";
+        if (deleted) {
+            required = false;
+            q.querySelector('.question-required').checked = false;
+
+        }
 
         const text = textInput.value.trim();
         const type = typeSelect.value;
 
         // TEXT VALIDATION
-        if (!text && !deleted) {
+        if (!deleted && (!text || text.length === 0)) {
             markInvalid(textInput);
             showError(`Question ${index + 1}: Text is required`);
             hasError = true;
@@ -69,7 +75,10 @@ document.getElementById('submitSurveyBtn').addEventListener('click', async () =>
 
         return { id, text, type, required, deleted, options };
     });
-
+    if (questions.length === 0 || questions.every(q => q.deleted)) {
+        showError("At least one non-deleted question is required");
+        hasError = true;
+    }
     if (hasError) return;
 
     try {
@@ -83,7 +92,7 @@ document.getElementById('submitSurveyBtn').addEventListener('click', async () =>
             })
         });
         if (!res.ok) throw new Error('Failed to update survey');
-        window.location.href = `/responses`;
+        window.location.href = `/control`;
     } catch (err) {
         console.error(err);
     }
@@ -114,7 +123,8 @@ function addQuestionCard(q, isOld) {
     const card = document.createElement('div');
     card.className = 'question card p-3 mb-3 shadow-sm';
     card.dataset.index = questionCounter;
-    if (isOld) card.dataset.id = q.id;
+    if (isOld && q.id != null) card.dataset.id = q.id;
+    card.dataset.deleted = q.deleted ? "true" : "false";
 
     card.innerHTML = `
         <h4 class="mb-3">Question ${questionCounter}</h4>
@@ -133,15 +143,22 @@ function addQuestionCard(q, isOld) {
 
         <div class="mb-3 question-options-container" ${q.type === 'text' ? 'style="display:none;"' : ''}>
             <label class="form-label">Options (comma separated)</label>
-            <input type="text" class="form-control question-options" value="${q.options.join(', ')}">
+            <input type="text" class="form-control question-options" value="${(q.options || []).join(', ')}">
         </div>
 
-        <div class="form-check mb-2">
-            <input type="checkbox" class="form-check-input question-required" ${q.required ? 'checked' : ''}>
-            <label class="form-check-label">Required</label>
+        <div class="form-check mb-2 d-inline-block me-3">
+            <input type="checkbox" class="form-check-input question-required" ${q.required ? 'checked' : ''} id="req-${questionCounter}">
+            <label class="form-check-label" for="req-${questionCounter}">Required</label>
         </div>
 
+        ${isOld ? `
+        <div class="form-check mb-2 d-inline-block">
+            <input type="checkbox" class="form-check-input question-deleted" ${q.deleted ? 'checked' : ''} id="del-${questionCounter}">
+            <label class="form-check-label text-danger" for="del-${questionCounter}">Deleted</label>
+        </div>
+        ` : `
         <button type="button" class="btn btn-danger btn-sm remove-question-btn">Remove</button>
+        `}
     `;
 
     // Show/Hide options input
@@ -152,19 +169,38 @@ function addQuestionCard(q, isOld) {
         else optionsDiv.style.display = 'block';
     });
 
-    // Remove question
-    card.querySelector('.remove-question-btn').addEventListener('click', () => {
+    if (isOld) {
+        const deletedCheckbox = card.querySelector('.question-deleted');
+        const requiredCheckbox = card.querySelector('.question-required');
+        
+        deletedCheckbox.addEventListener('change', () => {
+            card.dataset.deleted = deletedCheckbox.checked ? "true" : "false";
+            
+            if (deletedCheckbox.checked) {
+                // When deleted: uncheck and disable required
+                requiredCheckbox.checked = false;
+                requiredCheckbox.disabled = true;
+                card.classList.add('opacity-50');
+            } else {
+                // When restored: re-enable required
+                requiredCheckbox.disabled = false;
+                card.classList.remove('opacity-50');
+            }
+        });
+        
+        // apply initial visual state
+        if (card.dataset.deleted === "true") {
+            requiredCheckbox.checked = false;
+            requiredCheckbox.disabled = true;
+            card.classList.add('opacity-50');
+        }
+    } else {
         // NEW QUESTION → remove immediately
-        if (!isOld) {
+        const removeBtn = card.querySelector('.remove-question-btn');
+        removeBtn.addEventListener('click', () => {
             questionsContainer.removeChild(card);
-        }
-        // OLD QUESTION → mark deleted (soft delete)
-        else {
-            card.dataset.deleted = "true";
-            card.style.opacity = "0.5";
-            card.querySelectorAll("input, select, textarea").forEach(el => el.disabled = true);
-        }
-    });
+        });
+    }
 
     questionsContainer.appendChild(card);
 }

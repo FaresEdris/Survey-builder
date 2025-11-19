@@ -88,7 +88,10 @@ form.addEventListener('submit', async (e) => {
         hasError = true;
     }
     const questionsArr = Array.from(document.querySelectorAll('.question-item'));
-    
+    if (questionsArr.length === 0) {
+        document.getElementById('addQuestionBtn').classList.add('is-invalid');
+        hasError = true;
+    }
     const questions = questionsArr.map(q => {
         const textInput = q.querySelector('.question-text');
         const text = textInput.value.trim();
@@ -127,7 +130,7 @@ form.addEventListener('submit', async (e) => {
             body: JSON.stringify({ title, description, questions })
         });
         if (!res.ok) throw new Error('Failed to create survey.');
-        window.location.href = '/surveys/view';
+        window.location.href = '/control';
     } catch (err) {
         console.error(err);
         alert('Error creating survey.');

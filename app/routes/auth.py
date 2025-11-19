@@ -9,8 +9,11 @@ user_service = UserService()
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "").strip()
+        if not username or not password:
+            flash("Please enter both username and password.")
+            return redirect(url_for("auth.login"))
 
         user = user_service.find_by_username(username)
 
@@ -26,8 +29,11 @@ def login():
 @auth_bp.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "").strip()
+        if not username or not password:
+            flash("Please enter both username and password.")
+            return redirect(url_for("auth.register"))
 
         user=user_service.add_user(username, password)
         if user is None:

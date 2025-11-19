@@ -11,13 +11,11 @@
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
                         <input type="text" class="form-control" id="username" name="username" required>
-                        <div class="invalid-feedback">Username is required.</div>
                     </div>
 
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
                         <input type="password" class="form-control" id="password" name="password" required>
-                        <div class="invalid-feedback">Password is required.</div>
                     </div>
 
                     <button type="submit" class="btn btn-primary w-100">Register</button>
@@ -30,9 +28,7 @@
                 {% with messages = get_flashed_messages() %}
                   {% if messages %}
                     <ul class="mt-2 list-unstyled text-danger">
-                      {% for msg in messages %}
-                        <li>{{ msg }}</li>
-                      {% endfor %}
+                        <li>{{ messages[0] }}</li>
                     </ul>
                   {% endif %}
                 {% endwith %}
@@ -42,21 +38,4 @@
 </div>
 {% endblock %}
 
-{% block scripts %}
-<script>
-    // Bootstrap 5 custom validation
-    (function () {
-        'use strict'
-        const forms = document.querySelectorAll('.needs-validation')
-        Array.from(forms).forEach(function (form) {
-            form.addEventListener('submit', function (event) {
-                if (!form.checkValidity()) {
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-                form.classList.add('was-validated')
-            }, false)
-        })
-    })()
-</script>
-{% endblock %}
+

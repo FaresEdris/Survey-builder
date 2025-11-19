@@ -29,6 +29,7 @@
 
                     <div class="d-grid gap-2">
                         <button type="button" id="addQuestionBtn" class="btn btn-outline-primary">Add Question</button>
+                        <div class="invalid-feedback">Please add at least one question.</div>
                         <button type="submit" id="submitSurveyBtn" class="btn btn-primary">Publish Survey</button>
                     </div>
                 </form>
@@ -40,20 +41,4 @@
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/create_survey.js') }}"></script>
-
-<!-- <script>
-(function () {
-    'use strict'
-    const forms = document.querySelectorAll('.needs-validation');
-    Array.from(forms).forEach(function (form) {
-        form.addEventListener('submit', function (event) {
-            if (!form.checkValidity()) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
-            form.classList.add('was-validated');
-        }, false);
-    });
-})();
-</script> -->
 {% endblock %}

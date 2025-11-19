@@ -6,7 +6,6 @@
 
     <form id="editSurveyForm" class="needs-validation" novalidate>
         
-        <!-- Survey Title -->
         <div class="mb-3">
             <label for="title" class="form-label">Survey Title</label>
             <input type="text" class="form-control" id="title" name="title" 
@@ -14,7 +13,6 @@
             <div class="invalid-feedback">Title is required.</div>
         </div>
 
-        <!-- Survey Description -->
         <div class="mb-3">
             <label for="description" class="form-label">Description</label>
             <textarea class="form-control" id="description" name="description" 
@@ -22,15 +20,12 @@
             <div class="invalid-feedback">Description is required.</div>
         </div>
 
-        <!-- QUESTIONS -->
         <div id="questions" class="mb-4"></div>
 
-        <!-- Add Question -->
         <button type="button" class="btn btn-outline-primary mb-3" id="addQuestionBtn">
             + Add Question
         </button>
 
-        <!-- Submit -->
         <div>
             <button type="button" class="btn btn-primary" id="submitSurveyBtn">
                 Save Changes
@@ -40,7 +35,6 @@
     </form>
 </div>
 
-<!-- Pass survey data to JS -->
 <script>
     const surveyData = JSON.parse('{{ survey | tojson | safe }}');
 </script>
