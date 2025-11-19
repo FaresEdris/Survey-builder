@@ -28,12 +28,17 @@ def create_app():
         return render_template("index.html")
     
     @app.errorhandler(404)
-    def not_found_error(NotFound):   
+    def not_found_error(error):   
         return render_template("errors/404.html"), 404
     
     @app.errorhandler(400)
     def bad_request_error(BadRequest):   
         return render_template("errors/400.html"), 400
+
+    @app.errorhandler(403)
+    def forbidden_error(error):
+        return render_template("errors/403.html"), 403
+
     
 
     return app

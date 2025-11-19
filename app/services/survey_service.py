@@ -9,16 +9,20 @@ class SurveyService:
     def __init__(self):
         self.survey_repo = Repository("surveys", map_survey)
 
-    def get_all_surveys(self):
+    def get_all_surveys(self, username=None):
         surveys = self.survey_repo.get_items()
+        if username:
+            surveys = [s for s in surveys if s.get("creator") == username]
         surveys.sort(key=lambda s: s.get("created_at", ""), reverse=True)
         return surveys
     
-    def get_survey(self, survey_id):
-        try:
-            return self.survey_repo.get_by_id(survey_id)
-        except Exception:
+    def get_survey(self, survey_id,username=None):
+        survey = self.survey_repo.get_by_id(survey_id)
+        if not survey:
             raise NotFound("Survey not found")
+        if username and survey.get("creator") != username:
+            raise Forbidden("You are not allowed to access this survey")
+        return survey
 
     def add_survey(self, survey_data):
         title = survey_data.get("title")
@@ -35,47 +39,28 @@ class SurveyService:
         return self.survey_repo.add(survey_data)
     
     def delete_survey(self, survey_id):
-        try:
-            return self.survey_repo.delete(survey_id)
-        except Exception:
-            raise NotFound("Survey not found")
-    #not in use currently
-    def update_metadata(self, survey_id, updates):
-        updates["updated_at"] = datetime.now(timezone.utc).isoformat()
-        return self.survey_repo.update(survey_id, updates)
+        survey = self.get_survey(survey_id)
+        return self.survey_repo.delete(survey_id)
+        
 
-    def get_paginated(self, page=1, per_page=15):
+    def paginate_surveys(self, page=1, per_page=15):
         all_surveys = self.get_all_surveys()
         visible = [s for s in all_surveys if not s.get("archived")]
-
-        total = len(visible)
-        start = (page - 1) * per_page
-
-        return {
-            "surveys": visible[start:start+per_page],
-            "total": total,
-            "page": page,
-            "has_next": start + per_page < total,
-            "has_prev": start > 0
-        }
+        return self.survey_repo.paginate(visible, page, per_page)
     
-    def update_survey(self, survey_id, data):
-        survey = self.survey_repo.get_by_id(survey_id)
-        if not survey:
-            raise NotFound("Survey not found")
-
+    def update_survey(self, survey_id, data,username):
+        survey = self.get_survey(survey_id,username=username)
         title = data.get("title", "").strip()
         description = data.get("description", "").strip()
         if not title:
             raise BadRequest("Title cannot be empty")
         if not description:
             raise BadRequest("Description cannot be empty")
-        survey["title"] = title
-        survey["description"] = description
-
+        survey["title"],survey["description"] = title, description
         questions_data = data.get("questions", [])
         if not questions_data:
             raise BadRequest("Survey must have at least one question")
+        
         updated_questions = []
         for q in questions_data:
             q_id = q.get("id")
@@ -84,7 +69,6 @@ class SurveyService:
             q_options = q.get("options", [])
             q_required = bool(q.get("required", False))
             q_deleted = bool(q.get("deleted", False))
-
             if not q_text:
                 raise BadRequest(f"Question text cannot be empty (id={q_id})")
             if q_type in ("multiple", "checkbox") and len(q_options) < 2:
@@ -114,14 +98,10 @@ class SurveyService:
         return survey
 
 
-    def archive(self, survey_id, user):
-        survey = self.get_survey(survey_id)
-        if survey["creator"] != user.username:
-            raise Forbidden("Not allowed.")
+    def archive(self, survey_id, username):
+        survey = self.get_survey(survey_id, username=username)
         return self.survey_repo.update(survey_id, {"archived": True})
 
-    def unarchive(self, survey_id, user):
-        survey = self.get_survey(survey_id)
-        if survey["creator"] != user.username:
-            raise Forbidden("Not allowed.")
+    def unarchive(self, survey_id, username):
+        survey = self.get_survey(survey_id,username=username)
         return self.survey_repo.update(survey_id, {"archived": False})

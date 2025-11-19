@@ -3,59 +3,64 @@
 {% block content %}
 <div class="container mt-4">
 
-    <h2 class="mb-4">Responses for: {{ survey.title }}</h2>
+    <h2 class="mb-3">Responses for: {{ survey.title }}</h2>
 
     {% if survey.archived %}
-    <div class="alert alert-danger">
-        This survey is archived.
+    <div class="alert alert-warning">
+        <strong>This survey is archived.</strong>
     </div>
     {% endif %}
 
-    <div class="mb-3">
-        <a href="{{ url_for('survey_control.view_all_responses') }}" class="btn btn-secondary">
-            ← Back to All Surveys
-        </a>
-    </div>
+    <a href="{{ url_for('survey_control.view_all_responses') }}" 
+       class="btn btn-secondary btn-sm mb-3">
+       ← Back to Responses Overview
+    </a>
 
     {% if responses %}
-    <div class="row g-3">
-
         {% for r in responses %}
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title mb-2">Response #{{ r.id }}</h5>
-                    <p class="mb-1"><strong>Respondent:</strong> {{ r.respondent or "Anonymous" }}</p>
-                    <p class="mb-2"><strong>Submitted at:</strong> {{ r.get('submitted_at', 'n/a') }}</p>
+        <div class="card mb-3 shadow-sm">
+            <div class="card-body">
 
-                    <ul class="list-group list-group-flush mb-3">
-                        {% for ans in r.answers %}
-                        {% set q = survey.questions | selectattr('id', 'equalto', ans.question_id) | first %}
-                        <li class="list-group-item">
-                            <strong>{{ q.text if q else ('Question '+ans.question_id|string) }}:</strong>
-                            {{ ans.answer }}
-                        </li>
-                        {% endfor %}
-                    </ul>
+                <h5 class="card-title">Response #{{ r.id }}</h5>
 
-                    <!-- Optional: Delete response -->
-                    {% if false %}
-                    <form method="POST" action="{{ url_for('survey_control.delete_response', response_id=r.id) }}"
-                          onsubmit="return confirm('Delete this response?');">
-                        <button type="submit" class="btn btn-sm btn-danger">Delete Response</button>
-                    </form>
-                    {% endif %}
-                </div>
+                <p><strong>Respondent:</strong> {{ r.respondent or "Anonymous" }}</p>
+                <p><strong>Submitted at:</strong> {{ r.get('submitted_at', 'n/a') }}</p>
+
+                <ul class="list-group list-group-flush mt-3">
+                {% for ans in r.answers %}
+                    {% set q = survey.questions | selectattr('id', 'equalto', ans.question_id) | first %}
+                    <li class="list-group-item">
+                        <strong>{{ q.text if q else ('Question ' ~ ans.question_id) }}:</strong>
+                        {{ ans.answer }}
+                    </li>
+                {% endfor %}
+                </ul>
+
             </div>
         </div>
         {% endfor %}
 
-    </div>
-    {% else %}
-    <div class="alert alert-info">
-        No responses yet.
-    </div>
-    {% endif %}
+        <nav aria-label="Survey pagination" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if has_prev %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('survey_control.survey_responses_list', survey_id=survey.id, page=page-1) }}"> Previous</a>
+                </li>
+                {% endif %}
+                <li class="page-item disabled">
+                    <span class="page-link">Page {{ page }}</span>
+                </li>
+                {% if has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('survey_control.survey_responses_list', survey_id=survey.id, page=page+1) }}">Next </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+
+        {% else %}
+            <div class="alert alert-info">No responses yet.</div>
+        {% endif %}
 
 </div>
 {% endblock %}

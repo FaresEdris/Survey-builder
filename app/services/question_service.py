@@ -2,7 +2,7 @@ from app.repository.json_repository import Repository
 from app.mappers.survey import  map_survey
 from app.mappers.question import map_question
 from datetime import datetime, timezone
-from werkzeug.exceptions import NotFound, BadRequest, Forbidden
+from werkzeug.exceptions import NotFound, BadRequest
 
 class QuestionService:
     def __init__(self):

@@ -12,9 +12,18 @@ survey_bp = Blueprint("survey", __name__)
 
 @survey_bp.route("/surveys/view")
 def view_surveys():
-    page = int(request.args.get("page", 1))
-    data = survey_service.get_paginated(page=page)
-    return render_template("surveys.html", **data)
+    page = request.args.get("page", 1, type=int)
+    data = survey_service.paginate_surveys(page=page, per_page=3)
+    return render_template(
+        "surveys.html",
+        surveys=data["items"],
+        page=data["page"],
+        total=data["total"],
+        pages=data["total_pages"],
+        per_page=data["per_page"],
+        has_next=data["has_next"],
+        has_prev=data["has_prev"]
+    )
 
 @survey_bp.route("/surveys/<int:survey_id>/view")
 def view_survey_detail(survey_id):
@@ -53,7 +62,6 @@ def create_survey():
 @survey_bp.route("/api/surveys/<int:survey_id>/responses", methods=["POST"])
 def api_submit_response(survey_id):
     data = request.json
-    # add current user either here 
     respondent = current_user.username if current_user.is_authenticated else "Anonymous"
     answers = data.get("answers", [])
     response = response_service.submit(survey_id, respondent, answers)

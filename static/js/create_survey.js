@@ -61,20 +61,34 @@ addQuestionBtn.addEventListener('click', () => {
     });
 });
 
+// Form submit handler
+const form = document.getElementById('createSurveyForm');
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    // show bootstrap validation styles
+    form.classList.add('was-validated');
 
-// Submit survey
-document.getElementById('submitSurveyBtn').addEventListener('click', async () => {
+    // If native validation fails, stop and show browser/Bootstrap feedback
+    if (!form.checkValidity()) {
+        const firstInvalid = form.querySelector(':invalid');
+        if (firstInvalid) firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+    }
+
+    // Gather values
     const title = document.getElementById('title').value.trim();
     const description = document.getElementById('description').value.trim();
-
-     if (!title || !description) {
-        alert('Title and description are required.');
-        return;
-    } 
-
-    const questionsArr = Array.from(document.querySelectorAll('.question-item'));
     let hasError = false;
-
+    if (!title || title.length === 0) {
+        document.getElementById('title').classList.add('is-invalid');
+        hasError = true;
+    }
+    if (!description || description.length === 0) {
+        document.getElementById('description').classList.add('is-invalid');
+        hasError = true;
+    }
+    const questionsArr = Array.from(document.querySelectorAll('.question-item'));
+    
     const questions = questionsArr.map(q => {
         const textInput = q.querySelector('.question-text');
         const text = textInput.value.trim();
@@ -87,8 +101,8 @@ document.getElementById('submitSurveyBtn').addEventListener('click', async () =>
         textInput.classList.remove('is-invalid');
         if (optionsInput) optionsInput.classList.remove('is-invalid');
 
-        // Validation
-        if (!text) {
+        // Validation for dynamic question fields
+        if (!text || text.length === 0) {
             textInput.classList.add('is-invalid');
             hasError = true;
         }
@@ -99,16 +113,10 @@ document.getElementById('submitSurveyBtn').addEventListener('click', async () =>
         }
 
         return { text, type, required, options };
-});
+    });
 
     if (hasError) {
-    // Optionally scroll to the first invalid input
-        document.querySelector('.is-invalid').scrollIntoView({ behavior: 'smooth', block: 'center' });
-        return; // stop the fetch
-    }
-
-    if (questions.length === 0) {
-        alert('Add at least one valid question.');
+        document.querySelector('.is-invalid')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
     }
 
@@ -119,11 +127,10 @@ document.getElementById('submitSurveyBtn').addEventListener('click', async () =>
             body: JSON.stringify({ title, description, questions })
         });
         if (!res.ok) throw new Error('Failed to create survey.');
-        //alert('Survey created successfully!');
         window.location.href = '/surveys/view';
     } catch (err) {
         console.error(err);
-        //alert('Error creating survey.');
+        alert('Error creating survey.');
     }
 });
 

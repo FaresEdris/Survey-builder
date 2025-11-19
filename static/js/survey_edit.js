@@ -83,7 +83,7 @@ document.getElementById('submitSurveyBtn').addEventListener('click', async () =>
             })
         });
         if (!res.ok) throw new Error('Failed to update survey');
-        window.location.href = `/surveys/${surveyData.id}/responses`;
+        window.location.href = `/responses`;
     } catch (err) {
         console.error(err);
     }

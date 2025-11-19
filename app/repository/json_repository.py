@@ -52,3 +52,19 @@ class Repository:
                 item.update(updates)
                 self.save_db(data)
                 return item
+
+    def paginate(self, items, page=1, per_page=10):
+        total = len(items)
+        start = (page - 1) * per_page
+        end = start + per_page
+        paged = items[start:end]
+
+        return {
+            "items": paged,
+            "total": total,
+            "page": page,
+            "per_page": per_page,
+            "total_pages": (total + per_page - 1) // per_page,
+            "has_next": end < total,
+            "has_prev": start > 0
+        }

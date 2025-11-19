@@ -1,55 +1,68 @@
 {% extends "base.html" %}
+
 {% block css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/survey_detail.css') }}">
 {% endblock %}
 
 {% block content %}
+<div class="container mt-4">
 
-<h2>{{ survey.title }}</h2>
-<p>{{ survey.description }}</p>
+    <h2 class="mb-3">{{ survey.title }}</h2>
+    <p class="text-muted">{{ survey.description }}</p>
 
-<form id="surveyForm">
-    {% for question in survey.questions %}
-    <div class="question-block">
+    <form id="surveyForm" class="needs-validation" novalidate>
 
-        <p class="question-text">
-            <strong>{{ loop.index }}. {{ question.text }}</strong>
-        </p>
+        <div id="errorContainer"></div>
 
-        {% if question.type == 'multiple' %}
-            {% for option in question.options %}
-            <label class="option-line">
-                {{ option }}<input type="radio" name="q_{{ question.id }}" value="{{ option }}">
-                
-            </label>
-            {% endfor %}
+        {% for question in survey.questions %}
+        <div class="card mb-4 p-3 question-block" data-qid="{{ question.id }}">
+            <p class="fw-bold mb-2">{{ loop.index }}. {{ question.text }}
+                {% if question.required %}
+                    <span class="text-danger">*</span>
+                {% endif %}
+            </p>
 
-        {% elif question.type == 'text' %}
-            <textarea name="q_{{ question.id }}" rows="3"></textarea>
+            {% if question.type == 'multiple' %}
+                {% for option in question.options %}
+                <div class="form-check">
+                    <input class="form-check-input" type="radio"
+                           name="q_{{ question.id }}" value="{{ option }}">
+                    <label class="form-check-label">{{ option }}</label>
+                </div>
+                {% endfor %}
 
-        {% elif question.type == 'checkbox' %}
-            {% for option in question.options %}
-            <label class="option-line">
-                {{ option }}<input type="checkbox" name="q_{{ question.id }}" value="{{ option }}">
-            </label>
-            {% endfor %}
-        {% endif %}
+            {% elif question.type == 'text' %}
+                <textarea class="form-control" rows="3" name="q_{{ question.id }}"></textarea>
 
-    </div>
-    <hr>
-    {% endfor %}
+            {% elif question.type == 'checkbox' %}
+                {% for option in question.options %}
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox"
+                           name="q_{{ question.id }}" value="{{ option }}">
+                    <label class="form-check-label">{{ option }}</label>
+                </div>
+                {% endfor %}
+            {% endif %}
 
-    <div class="buttons">
-        <a href="{{ url_for('survey.view_surveys') }}" id="backBtn">← Back</a>
-        <button type="button" id="draftBtn">Save Draft</button>
-        <button type="submit" id="submitBtn">Send</button>
-        <button type="button" id="resetBtn">Reset</button>
-    </div>
-</form>
+            <!-- Validation feedback -->
+            <div class="invalid-feedback mt-2">
+                This question is required.
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="d-flex gap-2 mt-4">
+            <a href="{{ url_for('survey.view_surveys') }}" class="btn btn-secondary" id="backBtn">← Back</a>
+            <button type="button" class="btn btn-outline-primary" id="draftBtn">Save Draft</button>
+            <button type="submit" class="btn btn-primary" id="submitBtn">Send</button>
+            <button type="button" class="btn btn-warning" id="resetBtn">Reset</button>
+        </div>
+
+    </form>
+</div>
 
 <script>
-  const survey = JSON.parse('{{ survey|tojson | safe }}');
+const survey = JSON.parse('{{ survey|tojson | safe }}');
 </script>
 <script src="{{ url_for('static', filename='js/survey_detail.js') }}"></script>
-
 {% endblock %}
