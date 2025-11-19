@@ -11,6 +11,7 @@ install (for instance anything in Python that you `pip
 install-ed`)?
 List those here (if any).
 `pip install flask,flask-login`.
+ALSO: Bootstrap
 ## Project Checklist
 - [x] It is available on GitHub.
 - [x] It uses the Flask web framework.
