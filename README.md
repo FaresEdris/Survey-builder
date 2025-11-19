@@ -73,6 +73,3 @@ Instead, all user feedback needs to be visible in the
 browser.
 - [x] All exercises have been completed as per the
 requirements and pushed to the respective GitHub repository.
-browser.
-- [] All exercises have been completed as per the
-requirements and pushed to the respective GitHub repository.
